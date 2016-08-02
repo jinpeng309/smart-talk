@@ -1,4 +1,4 @@
-package com.capslock.im.commons.packet.response;
+package com.capslock.im.commons.packet.outbound.response;
 
 /**
  * Created by capslock1874.

@@ -2,7 +2,7 @@ package com.capslock.im.net;
 
 import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
 import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.request.SocketInboundAuthPacket;
+import com.capslock.im.commons.packet.inbound.request.SocketInboundAuthPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
 import com.capslock.im.component.ConnectionManager;
 import com.fasterxml.jackson.databind.JsonNode;

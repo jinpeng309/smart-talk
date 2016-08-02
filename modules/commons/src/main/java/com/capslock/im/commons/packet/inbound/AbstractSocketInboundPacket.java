@@ -1,4 +1,4 @@
-package com.capslock.im.commons.packet.request;
+package com.capslock.im.commons.packet.inbound;
 
 import lombok.Data;
 
