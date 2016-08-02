@@ -1,5 +1,6 @@
 package com.capslock.im.model;
 
+import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public final class SessionToSessionPacketRequest extends AbstractClusterPacketRequest {
-    private final long senderUid;
+    private final ClientPeer senderClient;
     private final long receiverUid;
     private final ProtocolPacket packet;
 

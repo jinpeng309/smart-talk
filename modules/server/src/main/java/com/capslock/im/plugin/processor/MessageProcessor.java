@@ -40,10 +40,9 @@ public class MessageProcessor implements PacketProcessor {
             final PrivateChatMessagePacket messagePacket = (PrivateChatMessagePacket) ProtocolPacketDeserializer
                     .deserialize(packet.getProtocolPacket())
                     .orElseThrow(() -> new IllegalArgumentException("illegal packet " + packet.getProtocolPacket()));
-            final long senderUid = messagePacket.getSenderUid();
             final long receiverUid = messagePacket.getTo();
 
-            final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(senderUid, receiverUid,
+            final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(from, receiverUid,
                     packet.getProtocolPacket());
             output.add(request);
         } else if (packet.getType() == PacketType.S2S) {

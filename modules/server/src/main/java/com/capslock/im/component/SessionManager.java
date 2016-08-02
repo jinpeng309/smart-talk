@@ -7,6 +7,7 @@ import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
+import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.LogicServerNodeAddEvent;
@@ -191,12 +192,17 @@ public class SessionManager extends MessageReceiver<Packet> {
     private void processOutputPacketRequest(final Collection<AbstractClusterPacketRequest> packets) {
         packets.forEach(request -> {
             if (request.getType() == PacketType.S2S) {
-                final long receiverUid = ((SessionToSessionPacketRequest) request).getReceiverUid();
+                final SessionToSessionPacketRequest packetRequest =
+                        (SessionToSessionPacketRequest) request;
+                final long receiverUid = packetRequest.getReceiverUid();
                 final Session localSession = sessionMap.get(receiverUid);
                 if (localSession != null) {
 
                 } else {
-
+                    final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
+                    final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
+                            packetRequest.getPacket(), packetRequest.getSenderClient(), receiverUid);
+                    postOutputMessage(outPacket);
                 }
             }
         });
