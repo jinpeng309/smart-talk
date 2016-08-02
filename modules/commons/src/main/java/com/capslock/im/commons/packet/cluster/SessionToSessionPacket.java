@@ -16,10 +16,10 @@ public class SessionToSessionPacket extends Packet {
     @JsonProperty(ClusterProtocol.MESSAGE_FROM)
     private final ClientPeer messageFrom;
     @JsonProperty(ClusterProtocol.MESSAGE_TO)
-    private final ClientPeer messageTo;
+    private final Long messageTo;
 
     public SessionToSessionPacket(final Peer from, final Peer to, final ProtocolPacket protocolPacket,
-            final ClientPeer messageFrom, final ClientPeer messageTo) {
+            final ClientPeer messageFrom, final Long messageTo) {
         super(from, to, protocolPacket);
         this.messageFrom = messageFrom;
         this.messageTo = messageTo;
