@@ -1,4 +1,4 @@
-package com.capslock.im.commons.packet.inbound;
+package com.capslock.im.commons.packet.request;
 
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;

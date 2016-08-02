@@ -2,7 +2,7 @@ package com.capslock.im.commons.deserializer;
 
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.inbound.AbstractSocketInboundPacket;
+import com.capslock.im.commons.packet.request.AbstractSocketInboundPacket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
