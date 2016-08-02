@@ -7,10 +7,13 @@ import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
+import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import com.capslock.im.commons.packet.protocol.PrivateChatMessageProtocol;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.component.Session;
+import com.capslock.im.model.AbstractClusterPacketRequest;
+import com.capslock.im.model.SessionToSessionPacketRequest;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ public class MessageProcessor implements PacketProcessor {
     }
 
     @Override
-    public void process(final Packet packet, final Session session, final ArrayList<Packet> output) {
+    public void process(final Packet packet, final Session session, final ArrayList<AbstractClusterPacketRequest> output) {
         if (packet.getType() == PacketType.C2S) {
             final ClientToSessionPacket clientToSessionPacket = (ClientToSessionPacket) packet;
             final ClientPeer from = (ClientPeer) clientToSessionPacket.getFrom();
@@ -38,7 +41,13 @@ public class MessageProcessor implements PacketProcessor {
                     .deserialize(packet.getProtocolPacket())
                     .orElseThrow(() -> new IllegalArgumentException("illegal packet " + packet.getProtocolPacket()));
             final long senderUid = messagePacket.getSenderUid();
-            final long toUid = messagePacket.getTo();
+            final long receiverUid = messagePacket.getTo();
+
+            final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(senderUid, receiverUid,
+                    packet.getProtocolPacket());
+            output.add(request);
+        } else if (packet.getType() == PacketType.S2S) {
+            final SessionToSessionPacket sessionToSessionPacket = (SessionToSessionPacket) packet;
         }
     }
 }

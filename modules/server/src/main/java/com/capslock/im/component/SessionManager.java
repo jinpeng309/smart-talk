@@ -6,9 +6,12 @@ import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.LogicServerNodeAddEvent;
+import com.capslock.im.model.AbstractClusterPacketRequest;
+import com.capslock.im.model.SessionToSessionPacketRequest;
 import com.capslock.im.plugin.filter.PacketFilter;
 import com.capslock.im.plugin.postProcessor.PacketPostProcessor;
 import com.capslock.im.plugin.processor.PacketProcessor;
@@ -25,7 +28,13 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
@@ -179,8 +188,18 @@ public class SessionManager extends MessageReceiver<Packet> {
         sessionMessageQueueManager.postMessage(packet);
     }
 
-    private void postOutputMessages(final Collection<Packet> packets) {
-        sessionMessageQueueManager.postMessages(packets);
+    private void processOutputPacketRequest(final Collection<AbstractClusterPacketRequest> packets) {
+        packets.forEach(request -> {
+            if (request.getType() == PacketType.S2S) {
+                final long receiverUid = ((SessionToSessionPacketRequest) request).getReceiverUid();
+                final Session localSession = sessionMap.get(receiverUid);
+                if (localSession != null) {
+
+                } else {
+
+                }
+            }
+        });
     }
 
     public Session getOrCreateSession(final long uid) {
@@ -236,7 +255,7 @@ public class SessionManager extends MessageReceiver<Packet> {
                     final Session session = item.getSession();
                     final Packet packet = item.getPacket();
                     boolean needStop = false;
-                    final ArrayList<Packet> output = new ArrayList<>();
+                    final ArrayList<AbstractClusterPacketRequest> output = new ArrayList<>();
                     final List<PacketFilter> filterList = item.getPacketFilterList();
                     for (int i = 0; i < filterList.size() && !needStop; i++) {
                         needStop = filterList.get(i).process(packet, session, output);
@@ -245,7 +264,7 @@ public class SessionManager extends MessageReceiver<Packet> {
                         item.getProcessorList().forEach(processor -> processor.process(packet, session, output));
                         item.getPostProcessorList().forEach(processor -> processor.process(packet, session, output));
                     }
-                    postOutputMessages(output);
+                    processOutputPacketRequest(output);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
