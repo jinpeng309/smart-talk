@@ -14,7 +14,7 @@ public final class SessionToSessionPacketRequest extends AbstractClusterPacketRe
     private final ProtocolPacket packet;
 
     @Override
-    PacketType getType() {
+    public PacketType getType() {
         return PacketType.S2S;
     }
 }
