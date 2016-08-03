@@ -6,12 +6,13 @@ import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.Packet;
-import com.capslock.im.commons.packet.cluster.PacketType;
+import com.capslock.im.commons.packet.cluster.SessionToClientPacket;
 import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.LogicServerNodeAddEvent;
 import com.capslock.im.model.AbstractClusterPacketRequest;
+import com.capslock.im.model.SessionToClientPacketRequest;
 import com.capslock.im.model.SessionToSessionPacketRequest;
 import com.capslock.im.plugin.filter.PacketFilter;
 import com.capslock.im.plugin.postProcessor.PacketPostProcessor;
@@ -191,23 +192,36 @@ public class SessionManager extends MessageReceiver<Packet> {
 
     private void processOutputPacketRequest(final Collection<AbstractClusterPacketRequest> packets) {
         packets.forEach(request -> {
-            if (request.getType() == PacketType.S2S) {
-                final SessionToSessionPacketRequest packetRequest =
-                        (SessionToSessionPacketRequest) request;
-                final long receiverUid = packetRequest.getReceiverUid();
-                final Session localSession = sessionMap.get(receiverUid);
-                if (localSession != null) {
-                    final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
-                            packetRequest.getPacket(), packetRequest.getSenderClient(), receiverUid);
-                    postMessage(outPacket);
-                } else {
-                    final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
-                    final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
-                            packetRequest.getPacket(), packetRequest.getSenderClient(), receiverUid);
-                    postOutputMessage(outPacket);
-                }
+            switch (request.getType()) {
+                case S2S:
+                    processSessionToSessionPacketRequest((SessionToSessionPacketRequest) request);
+                    break;
+                case S2C:
+                    processSessionToClientPacketRequest(request);
+                    break;
             }
         });
+    }
+
+    private void processSessionToClientPacketRequest(final AbstractClusterPacketRequest request) {
+        final ClientPeer to = ((SessionToClientPacketRequest) request).getTo();
+        final SessionToClientPacket packet = new SessionToClientPacket(localServerPeer, to, request.getPacket());
+        postOutputMessage(packet);
+    }
+
+    private void processSessionToSessionPacketRequest(final SessionToSessionPacketRequest request) {
+        final long receiverUid = request.getReceiverUid();
+        final Session localSession = sessionMap.get(receiverUid);
+        if (localSession != null) {
+            final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
+                    request.getPacket(), request.getSenderClient(), receiverUid);
+            postMessage(outPacket);
+        } else {
+            final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
+            final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
+                    request.getPacket(), request.getSenderClient(), receiverUid);
+            postOutputMessage(outPacket);
+        }
     }
 
     public Session getOrCreateSession(final long uid) {

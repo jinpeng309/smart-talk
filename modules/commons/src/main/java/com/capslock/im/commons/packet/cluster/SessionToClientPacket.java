@@ -1,7 +1,7 @@
 package com.capslock.im.commons.packet.cluster;
 
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.model.Peer;
+import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.ProtocolPacket;
 
 /**
@@ -9,7 +9,7 @@ import com.capslock.im.commons.packet.ProtocolPacket;
  */
 public class SessionToClientPacket extends Packet {
 
-    public SessionToClientPacket(final Peer from, final ClientPeer to, final ProtocolPacket protocolPacket) {
+    public SessionToClientPacket(final LogicServerPeer from, final ClientPeer to, final ProtocolPacket protocolPacket) {
         super(from, to, protocolPacket);
     }
 

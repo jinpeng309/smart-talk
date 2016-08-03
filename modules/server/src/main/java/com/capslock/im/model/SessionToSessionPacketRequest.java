@@ -3,16 +3,22 @@ package com.capslock.im.model;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Created by capslock1874.
  */
-@Data
+@Getter
 public final class SessionToSessionPacketRequest extends AbstractClusterPacketRequest {
     private final ClientPeer senderClient;
     private final long receiverUid;
-    private final ProtocolPacket packet;
+
+    public SessionToSessionPacketRequest(final ProtocolPacket packet, final ClientPeer senderClient,
+            final long receiverUid) {
+        super(packet);
+        this.senderClient = senderClient;
+        this.receiverUid = receiverUid;
+    }
 
     @Override
     public PacketType getType() {
