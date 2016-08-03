@@ -7,7 +7,6 @@ import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
-import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import com.capslock.im.commons.packet.protocol.PrivateChatMessageProtocol;
 import com.capslock.im.commons.util.NetUtils;
@@ -36,7 +35,6 @@ public class MessageProcessor implements PacketProcessor {
         if (packet.getType() == PacketType.C2S) {
             final ClientToSessionPacket clientToSessionPacket = (ClientToSessionPacket) packet;
             final ClientPeer from = (ClientPeer) clientToSessionPacket.getFrom();
-            final LogicServerPeer to = (LogicServerPeer) clientToSessionPacket.getTo();
             final PrivateChatMessagePacket messagePacket = (PrivateChatMessagePacket) ProtocolPacketDeserializer
                     .deserialize(packet.getProtocolPacket())
                     .orElseThrow(() -> new IllegalArgumentException("illegal packet " + packet.getProtocolPacket()));
@@ -46,7 +44,9 @@ public class MessageProcessor implements PacketProcessor {
                     packet.getProtocolPacket());
             output.add(request);
         } else if (packet.getType() == PacketType.S2S) {
-            final SessionToSessionPacket sessionToSessionPacket = (SessionToSessionPacket) packet;
+            packet.getProtocolPacket();
+            session.getAllClients().forEach(clientInfo -> {
+            });
         }
     }
 }

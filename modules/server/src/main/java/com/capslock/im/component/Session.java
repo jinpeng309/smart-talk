@@ -1,5 +1,6 @@
 package com.capslock.im.component;
 
+import com.capslock.im.commons.model.ClientPeer;
 import lombok.Data;
 
 import java.util.Collection;
@@ -12,31 +13,31 @@ import java.util.Optional;
 @Data
 public class Session {
     private final long uid;
-    private final HashMap<String, ClientInfo> clientsMap = new HashMap<>();
+    private final HashMap<String, ClientPeer> clientsMap = new HashMap<>();
 
-    public Session(final long uid, final ClientInfo clientInfo) {
+    public Session(final long uid, final ClientPeer clientInfo) {
         this.uid = uid;
         addClient(clientInfo);
     }
 
-    public Session(final long uid, final Collection<ClientInfo> clients) {
+    public Session(final long uid, final Collection<ClientPeer> clients) {
         this.uid = uid;
         addClients(clients);
     }
 
-    public Optional<ClientInfo> getClient(final String devUuid) {
+    public Optional<ClientPeer> getClient(final String devUuid) {
         return Optional.ofNullable(clientsMap.get(devUuid));
     }
 
-    public Collection<ClientInfo> getAllClients() {
+    public Collection<ClientPeer> getAllClients() {
         return clientsMap.values();
     }
 
-    public void addClient(final ClientInfo client) {
+    public void addClient(final ClientPeer client) {
         clientsMap.put(client.getDeviceUuid(), client);
     }
 
-    public void addClients(final Collection<ClientInfo> clients) {
+    public void addClients(final Collection<ClientPeer> clients) {
         clients.forEach(this::addClient);
     }
 }

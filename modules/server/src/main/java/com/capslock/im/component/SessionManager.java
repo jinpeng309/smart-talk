@@ -197,7 +197,9 @@ public class SessionManager extends MessageReceiver<Packet> {
                 final long receiverUid = packetRequest.getReceiverUid();
                 final Session localSession = sessionMap.get(receiverUid);
                 if (localSession != null) {
-
+                    final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
+                            packetRequest.getPacket(), packetRequest.getSenderClient(), receiverUid);
+                    postMessage(outPacket);
                 } else {
                     final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
                     final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
@@ -213,7 +215,7 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     public Session createSession(final long uid) {
-        final ImmutableSet<ClientInfo> clients = connectedClientsCache.getClients(uid);
+        final ImmutableSet<ClientPeer> clients = connectedClientsCache.getClients(uid);
         final Session session = new Session(uid, clients);
         sessionMap.put(uid, session);
         return session;

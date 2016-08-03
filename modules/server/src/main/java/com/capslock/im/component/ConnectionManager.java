@@ -126,7 +126,7 @@ public class ConnectionManager extends MessageReceiver<Packet> {
         final ClientPeer clientPeer = connection.getClientPeer();
         connectionMap.put(clientPeer.getDeviceUuid(), connection);
         connectedClientsCache.addClient(clientPeer.getUid(), clientPeer.getConnServerNodeIp(),
-                clientPeer.getDeviceUuid());
+                clientPeer.getDeviceUuid(), clientPeer.getClientIp());
     }
 
     private Optional<Connection> getConnection(final String deviceUuid) {

@@ -1,5 +1,6 @@
 package com.capslock.im.component;
 
+import com.capslock.im.commons.model.ClientPeer;
 import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,16 +16,20 @@ public class ConnectedClientsCache {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    public ImmutableSet<ClientInfo> getClients(final long uid) {
+    public ImmutableSet<ClientPeer> getClients(final long uid) {
         final Map<Object, Object> entries = redisTemplate.boundHashOps(String.valueOf(uid)).entries();
-        final ImmutableSet.Builder<ClientInfo> builder = ImmutableSet.builder();
-        entries.forEach((connServerIp, devUuid) -> builder.add(
-                new ClientInfo(uid, devUuid.toString(), connServerIp.toString())));
+        final ImmutableSet.Builder<ClientPeer> builder = ImmutableSet.builder();
+        entries.forEach((connServerIp, clientInfo) -> {
+            final String strClientInfo = clientInfo.toString();
+            final String deviceUuid = strClientInfo.substring(0, strClientInfo.lastIndexOf("_"));
+            final String clientIp = strClientInfo.substring(strClientInfo.lastIndexOf("_"));
+            builder.add(new ClientPeer(clientIp, deviceUuid, uid, connServerIp.toString()));
+        });
         return builder.build();
     }
 
-    public void addClient(final long uid, final String connServerIp, final String devUuid) {
-        redisTemplate.boundHashOps(String.valueOf(uid)).put(connServerIp, devUuid);
+    public void addClient(final long uid, final String connServerIp, final String devUuid, final String clientIp) {
+        redisTemplate.boundHashOps(String.valueOf(uid)).put(connServerIp, devUuid + "_" + clientIp);
     }
 
     public void removeClient(final long uid, final String connServerIp) {

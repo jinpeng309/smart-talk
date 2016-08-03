@@ -65,8 +65,8 @@ public final class ClusterPacketDeserializer {
                 objectMapper.readValue(jsonNode.get(ClusterProtocol.PACKET_TO).toString(), LogicServerPeer.class);
         final ClientPeer clientFrom =
                 objectMapper.readValue(jsonNode.get(ClusterProtocol.MESSAGE_FROM).toString(), ClientPeer.class);
-        final ClientPeer clientTo =
-                objectMapper.readValue(jsonNode.get(ClusterProtocol.MESSAGE_TO).toString(), ClientPeer.class);
+        final Long clientTo =
+                objectMapper.readValue(jsonNode.get(ClusterProtocol.MESSAGE_TO).toString(), Long.class);
         final ProtocolPacket protocolPacket =
                 objectMapper.readValue(jsonNode.get(ClusterProtocol.PACKET_DATA).toString(), ProtocolPacket.class);
         packet = new SessionToSessionPacket(serverFrom, serverTo, protocolPacket, clientFrom, clientTo);
