@@ -15,7 +15,7 @@ public class ClientToSessionPacket extends Packet {
 
     @Override
     public int getDispatchIndex() {
-        return ((ClientPeer) getFrom()).getDeviceUuid().hashCode();
+        return (int) ((ClientPeer) getFrom()).getUid();
     }
 
     @Override

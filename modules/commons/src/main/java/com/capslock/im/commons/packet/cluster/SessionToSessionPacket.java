@@ -1,7 +1,6 @@
 package com.capslock.im.commons.packet.cluster;
 
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.model.Peer;
 import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.protocol.ClusterProtocol;
@@ -27,7 +26,7 @@ public class SessionToSessionPacket extends Packet {
 
     @Override
     public int getDispatchIndex() {
-        return ((LogicServerPeer) getTo()).getServerIp().hashCode();
+        return messageTo.intValue();
     }
 
     @Override
