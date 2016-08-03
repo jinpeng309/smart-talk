@@ -73,7 +73,7 @@ public class SessionManager extends MessageReceiver<Packet> {
     private ImmutableMap<String, List<PacketFilter>> packetFilterMap;
     private ImmutableMap<String, List<PacketPostProcessor>> packetPostPacketMap;
 
-    private final ArrayList<TransferQueue<ProcessorItem>> processorItemQueue = new ArrayList<>();
+    private final ArrayList<TransferQueue<ProcessItem>> processorItemQueue = new ArrayList<>();
     private final ArrayList<QueueListener> processorItemListener = new ArrayList<>();
 
     private String localHost;
@@ -103,7 +103,7 @@ public class SessionManager extends MessageReceiver<Packet> {
         final int availableProcessor = Runtime.getRuntime().availableProcessors();
         if (processorItemQueue.isEmpty()) {
             for (int i = 0; i < availableProcessor; i++) {
-                final TransferQueue<ProcessorItem> queue = new LinkedTransferQueue<>();
+                final TransferQueue<ProcessItem> queue = new LinkedTransferQueue<>();
                 processorItemQueue.add(queue);
                 final QueueListener queueListener = new QueueListener(queue);
                 processorItemListener.add(queueListener);
@@ -151,15 +151,15 @@ public class SessionManager extends MessageReceiver<Packet> {
         postProcessorItem(createProcessorItem(session, packet));
     }
 
-    private ProcessorItem createProcessorItem(final Session session, final Packet packet) {
+    private ProcessItem createProcessorItem(final Session session, final Packet packet) {
         final String protocolName = packet.getProtocolPacket().getName();
-        return new ProcessorItem(packet, session, getPacketFilterList(protocolName),
+        return new ProcessItem(packet, session, getPacketFilterList(protocolName),
                 getPacketProcessorList(protocolName), getPacketPostProcessor(protocolName));
     }
 
-    private void postProcessorItem(final ProcessorItem processorItem) {
-        final int index = processorItem.getPacket().getDispatchIndex();
-        processorItemQueue.get(Math.abs(index) % processorItemQueue.size()).add(processorItem);
+    private void postProcessorItem(final ProcessItem processItem) {
+        final int index = processItem.getPacket().getDispatchIndex();
+        processorItemQueue.get(Math.abs(index) % processorItemQueue.size()).add(processItem);
     }
 
     private List<PacketFilter> getPacketFilterList(final String protocol) {
@@ -249,7 +249,7 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     @Data
-    private static final class ProcessorItem {
+    private static final class ProcessItem {
         private final Packet packet;
         private final Session session;
         private final List<PacketFilter> packetFilterList;
@@ -258,10 +258,10 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     private final class QueueListener extends Thread {
-        private final TransferQueue<ProcessorItem> queue;
+        private final TransferQueue<ProcessItem> queue;
         private volatile boolean stop = false;
 
-        public QueueListener(final TransferQueue<ProcessorItem> queue) {
+        public QueueListener(final TransferQueue<ProcessItem> queue) {
             this.queue = queue;
         }
 
@@ -273,7 +273,7 @@ public class SessionManager extends MessageReceiver<Packet> {
         public void run() {
             while (!stop) {
                 try {
-                    final ProcessorItem item = queue.take();
+                    final ProcessItem item = queue.take();
                     final Session session = item.getSession();
                     final Packet packet = item.getPacket();
                     boolean needStop = false;
