@@ -14,12 +14,14 @@ import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.ClusterPacketInboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent;
 import com.capslock.im.event.Event;
+import com.capslock.im.event.EventType;
 import com.capslock.im.model.AbstractClusterPacketRequest;
 import com.capslock.im.model.SessionToClientPacketRequest;
 import com.capslock.im.model.SessionToSessionPacketRequest;
-import com.capslock.im.plugin.filter.PacketFilter;
-import com.capslock.im.plugin.postProcessor.PacketPostProcessor;
-import com.capslock.im.plugin.processor.PacketProcessor;
+import com.capslock.im.plugin.filter.EventFilter;
+import com.capslock.im.plugin.postProcessor.EventPostProcessor;
+import com.capslock.im.plugin.processor.InternalEventProcessor;
+import com.capslock.im.plugin.processor.PacketEventProcessor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -71,10 +73,10 @@ public class SessionManager extends MessageReceiver<Packet> {
 
     private final ConcurrentHashMap<Long, Session> sessionMap = new ConcurrentHashMap<>(10000);
 
-    private ImmutableMap<String, List<PacketProcessor>> processorMap;
-    private ImmutableMap<String, List<PacketFilter>> packetFilterMap;
-    private ImmutableMap<String, List<PacketPostProcessor>> packetPostPacketMap;
-
+    private ImmutableMap<String, List<PacketEventProcessor>> processorMap;
+    private ImmutableMap<String, List<EventFilter>> packetFilterMap;
+    private ImmutableMap<String, List<EventPostProcessor>> packetPostPacketMap;
+    private InternalEventProcessor internalEventProcessor = new InternalEventProcessor();
     private final ArrayList<TransferQueue<ProcessItem>> processorItemQueue = new ArrayList<>();
     private final ArrayList<QueueListener> processorItemListener = new ArrayList<>();
 
@@ -125,15 +127,15 @@ public class SessionManager extends MessageReceiver<Packet> {
 
     private void initProcessorMap() {
         final Reflections reflections = new Reflections("com.capslock.im.plugin.processor");
-        final HashMap<String, List<PacketProcessor>> processors = new HashMap<>();
+        final HashMap<String, List<PacketEventProcessor>> processors = new HashMap<>();
         reflections.getTypesAnnotatedWith(Protocol.class)
                 .forEach(clazz -> {
                     try {
                         final String protocolName = clazz.getAnnotation(Protocol.class).value();
                         if (processors.containsKey(protocolName)) {
-                            processors.get(protocolName).add((PacketProcessor) clazz.newInstance());
+                            processors.get(protocolName).add((PacketEventProcessor) clazz.newInstance());
                         } else {
-                            processors.put(protocolName, Lists.newArrayList((PacketProcessor) clazz.newInstance()));
+                            processors.put(protocolName, Lists.newArrayList((PacketEventProcessor) clazz.newInstance()));
                         }
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -164,24 +166,24 @@ public class SessionManager extends MessageReceiver<Packet> {
         processorItemQueue.get(Math.abs(index) % processorItemQueue.size()).add(processItem);
     }
 
-    private List<PacketFilter> getPacketFilterList(final String protocol) {
-        List<PacketFilter> result = packetFilterMap.get(protocol);
+    private List<EventFilter> getPacketFilterList(final String protocol) {
+        List<EventFilter> result = packetFilterMap.get(protocol);
         if (result == null) {
             result = Collections.emptyList();
         }
         return result;
     }
 
-    private List<PacketProcessor> getPacketProcessorList(final String protocol) {
-        List<PacketProcessor> result = processorMap.get(protocol);
+    private List<PacketEventProcessor> getPacketProcessorList(final String protocol) {
+        List<PacketEventProcessor> result = processorMap.get(protocol);
         if (result == null) {
             result = Collections.emptyList();
         }
         return result;
     }
 
-    private List<PacketPostProcessor> getPacketPostProcessor(final String protocol) {
-        List<PacketPostProcessor> result = packetPostPacketMap.get(protocol);
+    private List<EventPostProcessor> getPacketPostProcessor(final String protocol) {
+        List<EventPostProcessor> result = packetPostPacketMap.get(protocol);
         if (result == null) {
             result = Collections.emptyList();
         }
@@ -253,6 +255,10 @@ public class SessionManager extends MessageReceiver<Packet> {
         });
     }
 
+    public void stop() {
+        processorItemListener.forEach(QueueListener::shutdown);
+    }
+
     @Subscribe
     public void handleLogicServerNodeAdded(final LogicServerNodeAddEvent event) {
         cleanUselessSession();
@@ -262,9 +268,9 @@ public class SessionManager extends MessageReceiver<Packet> {
     private static final class ProcessItem {
         private final Event event;
         private final Session session;
-        private final List<PacketFilter> packetFilterList;
-        private final List<PacketProcessor> processorList;
-        private final List<PacketPostProcessor> postProcessorList;
+        private final List<EventFilter> eventFilterList;
+        private final List<PacketEventProcessor> processorList;
+        private final List<EventPostProcessor> postProcessorList;
     }
 
     private final class QueueListener extends Thread {
@@ -284,18 +290,23 @@ public class SessionManager extends MessageReceiver<Packet> {
             while (!stop) {
                 try {
                     final ProcessItem item = queue.take();
-                    final Session session = item.getSession();
-                    final Event event = item.getEvent();
-                    boolean needStop = false;
                     final ArrayList<Event> output = new ArrayList<>();
-                    final List<PacketFilter> filterList = item.getPacketFilterList();
-                    for (int i = 0; i < filterList.size() && !needStop; i++) {
-                        needStop = filterList.get(i).process(event, session, output);
+                    final Event event = item.getEvent();
+                    final Session session = item.getSession();
+                    if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
+                        boolean needStop = false;
+                        final List<EventFilter> filterList = item.getEventFilterList();
+                        for (int i = 0; i < filterList.size() && !needStop; i++) {
+                            needStop = filterList.get(i).process(event, session, output);
+                        }
+                        if (!needStop) {
+                            item.getProcessorList().forEach(processor -> processor.process(event, session, output));
+                            item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
+                        }
+                    } else if (event.getType() == EventType.INTERNAL) {
+                        internalEventProcessor.process(event, session, output);
                     }
-                    if (!needStop) {
-                        item.getProcessorList().forEach(processor -> processor.process(event, session, output));
-                        item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
-                    }
+
                     processOutputEvent(output);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by capslock1874.
  */
 @Protocol(PrivateChatMessageProtocol.NAME)
-public class MessageProcessor implements PacketProcessor {
+public class MessageEventProcessor implements PacketEventProcessor {
 
     public void process(final Packet packet, final Session session, final ArrayList<AbstractClusterPacketRequest> output) {
         if (packet.getType() == PacketType.C2S) {
