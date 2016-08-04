@@ -171,7 +171,6 @@ public class SessionManager extends MessageReceiver<Event> {
             final Session session = getOrCreateSession(internalEvent.getOwnerUid());
             postProcessorItem(createInternalEventProcessItem(session, event));
         }
-
     }
 
     private ProcessItem createClusterPacketInboundProcessItem(final Session session, final Packet packet) {
@@ -336,7 +335,7 @@ public class SessionManager extends MessageReceiver<Event> {
                             item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
                         }
                     } else if (event.getType() == EventType.INTERNAL) {
-                        internalEventProcessor.process(event, session, output);
+                        internalEventProcessor.process((InternalEvent) event, session, output);
                     }
 
                     processOutputEvent(output);
