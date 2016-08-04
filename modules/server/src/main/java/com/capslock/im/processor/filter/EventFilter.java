@@ -1,4 +1,4 @@
-package com.capslock.im.plugin.filter;
+package com.capslock.im.processor.filter;
 
 import com.capslock.im.component.Session;
 import com.capslock.im.event.Event;

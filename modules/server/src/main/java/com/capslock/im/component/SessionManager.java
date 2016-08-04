@@ -19,10 +19,10 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRe
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import com.capslock.im.event.InternalEvent.InternalEvent;
-import com.capslock.im.plugin.filter.EventFilter;
-import com.capslock.im.plugin.postProcessor.EventPostProcessor;
-import com.capslock.im.plugin.processor.InternalEventProcessor;
-import com.capslock.im.plugin.processor.PacketEventProcessor;
+import com.capslock.im.processor.filter.EventFilter;
+import com.capslock.im.processor.postProcessor.EventPostProcessor;
+import com.capslock.im.processor.processor.InternalEventProcessor;
+import com.capslock.im.processor.processor.PacketEventProcessor;
 import com.capslock.im.service.MessageService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

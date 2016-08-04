@@ -1,4 +1,4 @@
-package com.capslock.im.plugin.processor;
+package com.capslock.im.processor.processor;
 
 import com.capslock.im.component.Session;
 import com.capslock.im.event.Event;
