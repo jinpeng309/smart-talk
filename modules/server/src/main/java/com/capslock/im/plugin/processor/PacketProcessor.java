@@ -1,8 +1,7 @@
 package com.capslock.im.plugin.processor;
 
-import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.component.Session;
-import com.capslock.im.model.AbstractClusterPacketRequest;
+import com.capslock.im.event.Event;
 
 import java.util.ArrayList;
 
@@ -10,5 +9,5 @@ import java.util.ArrayList;
  * Created by capslock1874.
  */
 public interface PacketProcessor {
-    void process(final Packet packet, final Session session, final ArrayList<AbstractClusterPacketRequest> output);
+    void process(final Event event, final Session session, final ArrayList<Event> output);
 }

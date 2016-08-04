@@ -1,10 +1,10 @@
 package com.capslock.im.cluster;
 
+import com.capslock.im.cluster.event.LogicServerNodeAddEvent;
+import com.capslock.im.cluster.event.LogicServerNodeRemovedEvent;
 import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.component.ComponentIfc;
-import com.capslock.im.event.LogicServerNodeAddEvent;
-import com.capslock.im.event.LogicServerNodeRemovedEvent;
 import com.google.common.eventbus.EventBus;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;

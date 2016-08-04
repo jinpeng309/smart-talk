@@ -24,4 +24,9 @@ public final class SessionToSessionPacketRequest extends AbstractClusterPacketRe
     public PacketType getType() {
         return PacketType.S2S;
     }
+
+    @Override
+    public int getDispatchIndex() {
+        return (int) receiverUid;
+    }
 }

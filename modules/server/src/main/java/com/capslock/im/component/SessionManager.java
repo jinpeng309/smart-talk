@@ -2,6 +2,7 @@ package com.capslock.im.component;
 
 import com.capslock.im.cluster.ClusterManager;
 import com.capslock.im.cluster.LogicServerNodeSelector;
+import com.capslock.im.cluster.event.LogicServerNodeAddEvent;
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
@@ -10,7 +11,9 @@ import com.capslock.im.commons.packet.cluster.SessionToClientPacket;
 import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
-import com.capslock.im.event.LogicServerNodeAddEvent;
+import com.capslock.im.event.ClusterPacketInboundEvent;
+import com.capslock.im.event.ClusterPacketOutboundEvent;
+import com.capslock.im.event.Event;
 import com.capslock.im.model.AbstractClusterPacketRequest;
 import com.capslock.im.model.SessionToClientPacketRequest;
 import com.capslock.im.model.SessionToSessionPacketRequest;
@@ -31,7 +34,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -148,17 +150,17 @@ public class SessionManager extends MessageReceiver<Packet> {
     public void processInboundMessage(final Packet packet) {
         final ClientPeer client = (ClientPeer) packet.getFrom();
         final Session session = getOrCreateSession(client.getUid());
-        postProcessorItem(createProcessorItem(session, packet));
+        postProcessorItem(createClusterPacketInboundProcessItem(session, packet));
     }
 
-    private ProcessItem createProcessorItem(final Session session, final Packet packet) {
+    private ProcessItem createClusterPacketInboundProcessItem(final Session session, final Packet packet) {
         final String protocolName = packet.getProtocolPacket().getName();
-        return new ProcessItem(packet, session, getPacketFilterList(protocolName),
+        return new ProcessItem(new ClusterPacketInboundEvent(packet), session, getPacketFilterList(protocolName),
                 getPacketProcessorList(protocolName), getPacketPostProcessor(protocolName));
     }
 
     private void postProcessorItem(final ProcessItem processItem) {
-        final int index = processItem.getPacket().getDispatchIndex();
+        final int index = processItem.getEvent().getDispatchIndex();
         processorItemQueue.get(Math.abs(index) % processorItemQueue.size()).add(processItem);
     }
 
@@ -190,17 +192,15 @@ public class SessionManager extends MessageReceiver<Packet> {
         sessionMessageQueueManager.postMessage(packet);
     }
 
-    private void processOutputPacketRequest(final Collection<AbstractClusterPacketRequest> packets) {
-        packets.forEach(request -> {
-            switch (request.getType()) {
-                case S2S:
-                    processSessionToSessionPacketRequest((SessionToSessionPacketRequest) request);
-                    break;
-                case S2C:
-                    processSessionToClientPacketRequest(request);
-                    break;
-            }
-        });
+    private void processOutputClusterPacketEvent(final ClusterPacketOutboundEvent event) {
+        switch (event.getReuqestType()) {
+            case S2S:
+                processSessionToSessionPacketRequest((SessionToSessionPacketRequest) event.getRequest());
+                break;
+            case S2C:
+                processSessionToClientPacketRequest(event.getRequest());
+                break;
+        }
     }
 
     private void processSessionToClientPacketRequest(final AbstractClusterPacketRequest request) {
@@ -243,6 +243,16 @@ public class SessionManager extends MessageReceiver<Packet> {
         });
     }
 
+    private void processOutputEvent(final ArrayList<Event> output) {
+        output.forEach(event -> {
+            switch (event.getType()) {
+                case CLUSTER_PACKET_OUTBOUND:
+                    processOutputClusterPacketEvent((ClusterPacketOutboundEvent) event);
+                    break;
+            }
+        });
+    }
+
     @Subscribe
     public void handleLogicServerNodeAdded(final LogicServerNodeAddEvent event) {
         cleanUselessSession();
@@ -250,7 +260,7 @@ public class SessionManager extends MessageReceiver<Packet> {
 
     @Data
     private static final class ProcessItem {
-        private final Packet packet;
+        private final Event event;
         private final Session session;
         private final List<PacketFilter> packetFilterList;
         private final List<PacketProcessor> processorList;
@@ -275,22 +285,23 @@ public class SessionManager extends MessageReceiver<Packet> {
                 try {
                     final ProcessItem item = queue.take();
                     final Session session = item.getSession();
-                    final Packet packet = item.getPacket();
+                    final Event event = item.getEvent();
                     boolean needStop = false;
-                    final ArrayList<AbstractClusterPacketRequest> output = new ArrayList<>();
+                    final ArrayList<Event> output = new ArrayList<>();
                     final List<PacketFilter> filterList = item.getPacketFilterList();
                     for (int i = 0; i < filterList.size() && !needStop; i++) {
-                        needStop = filterList.get(i).process(packet, session, output);
+                        needStop = filterList.get(i).process(event, session, output);
                     }
                     if (!needStop) {
-                        item.getProcessorList().forEach(processor -> processor.process(packet, session, output));
-                        item.getPostProcessorList().forEach(processor -> processor.process(packet, session, output));
+                        item.getProcessorList().forEach(processor -> processor.process(event, session, output));
+                        item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
                     }
-                    processOutputPacketRequest(output);
+                    processOutputEvent(output);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
+
 }
