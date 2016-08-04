@@ -3,6 +3,7 @@ package com.capslock.im.service;
 import com.capslock.im.component.MessageReceiver;
 import com.capslock.im.component.SessionManager;
 import com.capslock.im.event.Event;
+import com.capslock.im.event.InternalEvent.InternalEvent;
 import com.capslock.im.event.InternalEvent.StorePrivateChatMessageRequestEvent;
 import com.capslock.im.event.InternalEvent.StorePrivateChatMessageSuccessEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,8 @@ public class MessageService extends MessageReceiver<Event> {
     @Autowired
     private SessionManager sessionManager;
 
-    public void processStorePrivateChatMessageEvent(final StorePrivateChatMessageRequestEvent event) {
+    private void processStorePrivateChatMessageEvent(final StorePrivateChatMessageRequestEvent event) {
+        //todo store message
         sessionManager.postMessage(new StorePrivateChatMessageSuccessEvent(event.getOwner()));
     }
 
@@ -31,7 +33,12 @@ public class MessageService extends MessageReceiver<Event> {
     }
 
     @Override
-    public void processInboundMessage(final Event message) {
-
+    public void processInboundMessage(final Event event) {
+        final InternalEvent internalEvent = (InternalEvent) event;
+        switch (((InternalEvent) event).getInternalEventType()) {
+            case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
+                processStorePrivateChatMessageEvent((StorePrivateChatMessageRequestEvent) internalEvent);
+                break;
+        }
     }
 }
