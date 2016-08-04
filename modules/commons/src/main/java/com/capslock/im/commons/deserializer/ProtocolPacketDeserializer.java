@@ -2,7 +2,6 @@ package com.capslock.im.commons.deserializer;
 
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.packet.AbstractSocketPacket;
-import com.capslock.im.commons.packet.ProtocolPacket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -44,16 +43,8 @@ public class ProtocolPacketDeserializer {
         return deserialize(name, data.toString());
     }
 
-    public static Optional<? extends AbstractSocketPacket> deserialize(final ProtocolPacket packet) {
-        return deserialize(packet.getName(), packet.getData());
-    }
-
     public static boolean isLegalProtocol(final String name) {
         return protocolMap.containsKey(name);
-    }
-
-    public static void main(String[] args) {
-        deserialize(null);
     }
 }
 

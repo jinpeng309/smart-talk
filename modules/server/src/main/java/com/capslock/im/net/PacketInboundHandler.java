@@ -2,7 +2,6 @@ package com.capslock.im.net;
 
 import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
 import com.capslock.im.commons.packet.AbstractSocketPacket;
-import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
 import com.capslock.im.component.ConnectionManager;
@@ -45,15 +44,12 @@ public class PacketInboundHandler extends SimpleChannelInboundHandler<String> {
         final AbstractSocketPacket socketPacket = ProtocolPacketDeserializer
                 .deserialize(protocolName, jsonNode.get(protocolName))
                 .orElseThrow(() -> new IllegalArgumentException("Illegal packet"));
-        final ProtocolPacket packet = new ProtocolPacket(protocolName, jsonNode.get(protocolName));
         if (!hasAuthorized && !AuthenticationProtocol.NAME.equalsIgnoreCase(protocolName)) {
             ctx.close();
         } else if (!hasAuthorized) {
-            ProtocolPacketDeserializer.deserialize(packet).ifPresent(p -> {
-                final SocketAuthRequestPacket authPacket = (SocketAuthRequestPacket) p;
-                deviceUuid = authPacket.getDeviceUuid();
-                hasAuthorized = connectionManager.authClient(connId, ctx, authPacket);
-            });
+            final SocketAuthRequestPacket authPacket = (SocketAuthRequestPacket) socketPacket;
+            deviceUuid = authPacket.getDeviceUuid();
+            hasAuthorized = connectionManager.authClient(connId, ctx, authPacket);
         } else {
             connectionManager.processPacketFromClient(deviceUuid, socketPacket);
         }
