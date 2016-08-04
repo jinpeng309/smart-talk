@@ -1,7 +1,7 @@
 package com.capslock.im.component;
 
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.packet.ProtocolPacket;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class Connection {
     private final ClientPeer clientPeer;
     private final ChannelHandlerContext ctx;
 
-    public void write(final ProtocolPacket packet){
+    public void write(final AbstractSocketPacket packet) {
         ctx.writeAndFlush(packet);
     }
 }

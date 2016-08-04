@@ -15,6 +15,7 @@ public class ClusterProtocol {
     public static final String PACKET_TO = "to";
     public static final String PACKET_TYPE = "type";
     public static final String PACKET_DATA = "data";
+    public static final String PACKET_PROTOCOL_NAME = "protocol";
     public static final String MESSAGE_FROM = "messageFrom";
     public static final String MESSAGE_TO = "messageTo";
 }

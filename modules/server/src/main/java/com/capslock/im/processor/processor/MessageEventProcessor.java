@@ -1,11 +1,10 @@
 package com.capslock.im.processor.processor;
 
 import com.capslock.im.commons.annotations.Protocol;
-import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
-import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
+import com.capslock.im.commons.packet.cluster.ClientToSessionClusterPacket;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import com.capslock.im.commons.packet.protocol.PrivateChatMessageProtocol;
@@ -29,23 +28,21 @@ public class MessageEventProcessor implements PacketEventProcessor {
     @Override
     public void process(final Event event, final Session session, final ArrayList<Event> output) {
         if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
-            final Packet packet = ((ClusterPacketInboundEvent) event).getPacket();
+            final ClusterPacket clusterClusterPacket = ((ClusterPacketInboundEvent) event).getClusterPacket();
 
-            if (packet.getType() == PacketType.C2S) {
-                final ClientToSessionPacket clientToSessionPacket = (ClientToSessionPacket) packet;
+            if (clusterClusterPacket.getType() == PacketType.C2S) {
+                final ClientToSessionClusterPacket clientToSessionPacket = (ClientToSessionClusterPacket) clusterClusterPacket;
                 final ClientPeer from = (ClientPeer) clientToSessionPacket.getFrom();
-                final PrivateChatMessagePacket messagePacket = (PrivateChatMessagePacket) ProtocolPacketDeserializer
-                        .deserialize(packet.getProtocolPacket())
-                        .orElseThrow(() -> new IllegalArgumentException("illegal packet " + packet.getProtocolPacket()));
+                final PrivateChatMessagePacket messagePacket = (PrivateChatMessagePacket) clusterClusterPacket.getPacket();
                 final long receiverUid = messagePacket.getTo();
-                final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(packet.getProtocolPacket(),
-                        from, receiverUid);
+                final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(
+                        clusterClusterPacket.getPacket(), from, receiverUid);
                 output.add(new ClusterPacketOutboundEvent(request));
                 output.add(new StorePrivateChatMessageRequestEvent(from, messagePacket));
-            } else if (packet.getType() == PacketType.S2S) {
-                final ProtocolPacket protocolPacket = packet.getProtocolPacket();
+            } else if (clusterClusterPacket.getType() == PacketType.S2S) {
+                final AbstractSocketPacket packet = clusterClusterPacket.getPacket();
                 session.getAllClients().forEach(clientPeer -> output.add(new ClusterPacketOutboundEvent(
-                        new SessionToClientPacketRequest(protocolPacket, clientPeer))));
+                        new SessionToClientPacketRequest(packet, clientPeer))));
             }
         }
     }

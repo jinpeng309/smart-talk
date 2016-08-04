@@ -1,7 +1,7 @@
 package com.capslock.im.commons.packet.outbound;
 
 import com.capslock.im.commons.annotations.Protocol;
-import com.capslock.im.commons.packet.inbound.AbstractSocketPacket;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

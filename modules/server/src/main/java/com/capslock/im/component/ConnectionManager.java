@@ -5,16 +5,14 @@ import com.capslock.im.cluster.LogicServerNodeSelector;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
-import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
-import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
+import com.capslock.im.commons.packet.cluster.ClientToSessionClusterPacket;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.outbound.SocketAuthResponse;
-import com.capslock.im.commons.serializer.PacketSerializer;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.ConnServerCondition;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.eventbus.EventBus;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Conditional(ConnServerCondition.class)
-public class ConnectionManager extends MessageReceiver<Packet> {
+public class ConnectionManager extends MessageReceiver<ClusterPacket> {
     private final ConcurrentHashMap<String, Connection> connectionMap = new ConcurrentHashMap<>();
     private String localHost;
     private ConnServerPeer localServerPeer;
@@ -77,23 +75,24 @@ public class ConnectionManager extends MessageReceiver<Packet> {
     }
 
     @Override
-    public void processInboundMessage(final Packet packet) {
-        if (packet.getType() == PacketType.S2C) {
-            processPacketFromLogicServer(packet);
+    public void processInboundMessage(final ClusterPacket clusterPacket) {
+        if (clusterPacket.getType() == PacketType.S2C) {
+            processPacketFromLogicServer(clusterPacket);
         }
     }
 
-    private void processPacketFromLogicServer(final Packet packet) {
-        final ClientPeer client = (ClientPeer) packet.getTo();
-        getConnection(client.getDeviceUuid()).ifPresent(conn -> writeRawPacket(conn, packet.getProtocolPacket()));
+    private void processPacketFromLogicServer(final ClusterPacket clusterPacket) {
+        final ClientPeer client = (ClientPeer) clusterPacket.getTo();
+        getConnection(client.getDeviceUuid()).ifPresent(conn -> writeRawPacket(conn, clusterPacket.getPacket()));
     }
 
-    public void processPacketFromClient(final String deviceUuid, final ProtocolPacket protocolPacket) {
+    public void processPacketFromClient(final String deviceUuid, final AbstractSocketPacket socketPacket) {
         final Connection connection = connectionMap.get(deviceUuid);
         if (connection != null) {
             final ClientPeer clientPeer = connection.getClientPeer();
             final LogicServerPeer logicServerPeer = logicServerNodeSelector.selectByUid(clientPeer.getUid());
-            final ClientToSessionPacket packet = new ClientToSessionPacket(clientPeer, logicServerPeer, protocolPacket);
+            final ClientToSessionClusterPacket packet = new ClientToSessionClusterPacket(clientPeer, logicServerPeer,
+                    socketPacket);
             connectionMessageQueueManager.postMessage(packet);
         }
     }
@@ -109,15 +108,11 @@ public class ConnectionManager extends MessageReceiver<Packet> {
         return true;
     }
 
-    public <T> void writePacket(final Connection connection, final T packet) {
-        try {
-            connection.write(PacketSerializer.serialize(packet));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+    public <T extends AbstractSocketPacket> void writePacket(final Connection connection, final T packet) {
+        connection.write(packet);
     }
 
-    public void writeRawPacket(final Connection connection, final ProtocolPacket packet){
+    public void writeRawPacket(final Connection connection, final AbstractSocketPacket packet) {
         connection.write(packet);
     }
 

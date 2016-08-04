@@ -2,14 +2,14 @@ package com.capslock.im.commons.packet.cluster;
 
 import com.capslock.im.commons.model.AdminPeer;
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.packet.ProtocolPacket;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 
 /**
  * Created by capslock1874.
  */
-public class AdminCommandPacket extends Packet {
-    public AdminCommandPacket(final AdminPeer from, final ClientPeer to, final ProtocolPacket protocolPacket) {
-        super(from, to, protocolPacket);
+public class AdminCommandClusterPacket extends ClusterPacket {
+    public AdminCommandClusterPacket(final AdminPeer from, final ClientPeer to, final AbstractSocketPacket packet) {
+        super(from, to, packet.getProtocolName(), packet);
     }
 
     @Override

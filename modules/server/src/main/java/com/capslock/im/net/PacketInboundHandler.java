@@ -1,6 +1,7 @@
 package com.capslock.im.net;
 
 import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
@@ -41,6 +42,9 @@ public class PacketInboundHandler extends SimpleChannelInboundHandler<String> {
     protected void channelRead0(final ChannelHandlerContext ctx, final String msg) throws Exception {
         final JsonNode jsonNode = mapper.readTree(msg);
         final String protocolName = jsonNode.fields().next().getKey();
+        final AbstractSocketPacket socketPacket = ProtocolPacketDeserializer
+                .deserialize(protocolName, jsonNode.get(protocolName))
+                .orElseThrow(() -> new IllegalArgumentException("Illegal packet"));
         final ProtocolPacket packet = new ProtocolPacket(protocolName, jsonNode.get(protocolName));
         if (!hasAuthorized && !AuthenticationProtocol.NAME.equalsIgnoreCase(protocolName)) {
             ctx.close();
@@ -51,7 +55,7 @@ public class PacketInboundHandler extends SimpleChannelInboundHandler<String> {
                 hasAuthorized = connectionManager.authClient(connId, ctx, authPacket);
             });
         } else {
-            connectionManager.processPacketFromClient(deviceUuid, packet);
+            connectionManager.processPacketFromClient(deviceUuid, socketPacket);
         }
     }
 

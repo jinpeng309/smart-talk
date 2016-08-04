@@ -2,15 +2,15 @@ package com.capslock.im.commons.packet.cluster;
 
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
-import com.capslock.im.commons.packet.ProtocolPacket;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 
 /**
  * Created by capslock1874.
  */
-public class ClientToSessionPacket extends Packet {
+public class ClientToSessionClusterPacket extends ClusterPacket {
 
-    public ClientToSessionPacket(final ClientPeer from, final LogicServerPeer to, final ProtocolPacket protocolPacket) {
-        super(from, to, protocolPacket);
+    public ClientToSessionClusterPacket(final ClientPeer from, final LogicServerPeer to, final AbstractSocketPacket packet) {
+        super(from, to, packet.getProtocolName(), packet);
     }
 
     @Override

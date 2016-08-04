@@ -1,8 +1,8 @@
 package com.capslock.im.commons.serializer;
 
 import com.capslock.im.commons.annotations.Protocol;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.inbound.AbstractSocketPacket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;

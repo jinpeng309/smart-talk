@@ -1,6 +1,6 @@
 package com.capslock.im.component;
 
-import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by capslock1874.
  */
 @Component
-public abstract class MessageQueueManager extends MessageReceiver<Packet> {
+public abstract class MessageQueueManager extends MessageReceiver<ClusterPacket> {
     protected static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
     @Autowired
     protected Connection connection;
@@ -24,7 +24,7 @@ public abstract class MessageQueueManager extends MessageReceiver<Packet> {
 
     abstract protected void initQueue() throws IOException;
 
-    abstract protected void processMessageFromMessageQueue(final Packet packet);
+    abstract protected void processMessageFromMessageQueue(final ClusterPacket clusterPacket);
 
 
     protected String getConnServerQueueNamePrefix() {

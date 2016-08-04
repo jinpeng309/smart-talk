@@ -6,9 +6,9 @@ import com.capslock.im.cluster.event.LogicServerNodeAddEvent;
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
-import com.capslock.im.commons.packet.cluster.Packet;
-import com.capslock.im.commons.packet.cluster.SessionToClientPacket;
-import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
+import com.capslock.im.commons.packet.cluster.SessionToClientClusterPacket;
+import com.capslock.im.commons.packet.cluster.SessionToSessionClusterPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
@@ -162,10 +162,10 @@ public class SessionManager extends MessageReceiver<Event> {
     @Override
     public void processInboundMessage(final Event event) {
         if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
-            final Packet packet = ((ClusterPacketInboundEvent) event).getPacket();
-            final ClientPeer client = (ClientPeer) packet.getFrom();
+            final ClusterPacket clusterPacket = ((ClusterPacketInboundEvent) event).getClusterPacket();
+            final ClientPeer client = (ClientPeer) clusterPacket.getFrom();
             final Session session = getOrCreateSession(client.getUid());
-            postProcessorItem(createClusterPacketInboundProcessItem(session, packet));
+            postProcessorItem(createClusterPacketInboundProcessItem(session, clusterPacket));
         } else if (event.getType() == EventType.INTERNAL) {
             final InternalEvent internalEvent = (InternalEvent) event;
             final Session session = getOrCreateSession(internalEvent.getOwnerUid());
@@ -173,9 +173,9 @@ public class SessionManager extends MessageReceiver<Event> {
         }
     }
 
-    private ProcessItem createClusterPacketInboundProcessItem(final Session session, final Packet packet) {
-        final String protocolName = packet.getProtocolPacket().getName();
-        return new ProcessItem(new ClusterPacketInboundEvent(packet), session, getPacketFilterList(protocolName),
+    private ProcessItem createClusterPacketInboundProcessItem(final Session session, final ClusterPacket clusterPacket) {
+        final String protocolName = clusterPacket.getProtocolName();
+        return new ProcessItem(new ClusterPacketInboundEvent(clusterPacket), session, getPacketFilterList(protocolName),
                 getPacketProcessorList(protocolName), getPacketPostProcessor(protocolName));
     }
 
@@ -204,8 +204,8 @@ public class SessionManager extends MessageReceiver<Event> {
         return packetPostPacketMap.getOrDefault(protocol, Collections.emptyList());
     }
 
-    private void postOutputMessage(final Packet packet) {
-        sessionMessageQueueManager.postMessage(packet);
+    private void postOutputMessage(final ClusterPacket clusterPacket) {
+        sessionMessageQueueManager.postMessage(clusterPacket);
     }
 
     private void processOutputClusterPacketEvent(final ClusterPacketOutboundEvent event) {
@@ -221,7 +221,7 @@ public class SessionManager extends MessageReceiver<Event> {
 
     private void processSessionToClientPacketRequest(final AbstractClusterPacketRequest request) {
         final ClientPeer to = ((SessionToClientPacketRequest) request).getTo();
-        final SessionToClientPacket packet = new SessionToClientPacket(localServerPeer, to, request.getPacket());
+        final SessionToClientClusterPacket packet = new SessionToClientClusterPacket(localServerPeer, to, request.getPacket());
         postOutputMessage(packet);
     }
 
@@ -230,11 +230,11 @@ public class SessionManager extends MessageReceiver<Event> {
         final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
         final Session localSession = sessionMap.get(receiverUid);
         if (localSession != null && localServerPeer.equals(toLogicServer)) {
-            final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
+            final SessionToSessionClusterPacket outPacket = new SessionToSessionClusterPacket(localServerPeer, localServerPeer,
                     request.getPacket(), request.getSenderClient(), receiverUid);
             postMessage(new ClusterPacketInboundEvent(outPacket));
         } else {
-            final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
+            final SessionToSessionClusterPacket outPacket = new SessionToSessionClusterPacket(localServerPeer, toLogicServer,
                     request.getPacket(), request.getSenderClient(), receiverUid);
             postOutputMessage(outPacket);
         }

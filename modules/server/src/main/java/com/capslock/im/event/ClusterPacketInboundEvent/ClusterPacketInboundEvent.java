@@ -1,6 +1,6 @@
 package com.capslock.im.event.ClusterPacketInboundEvent;
 
-import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
@@ -11,10 +11,10 @@ import lombok.Data;
  */
 @Data
 public class ClusterPacketInboundEvent extends Event {
-    private final Packet packet;
+    private final ClusterPacket clusterPacket;
 
     public PacketType getPacketType() {
-        return packet.getType();
+        return clusterPacket.getType();
     }
 
     @Override
@@ -24,6 +24,6 @@ public class ClusterPacketInboundEvent extends Event {
 
     @Override
     public int getDispatchIndex() {
-        return packet.getDispatchIndex();
+        return clusterPacket.getDispatchIndex();
     }
 }

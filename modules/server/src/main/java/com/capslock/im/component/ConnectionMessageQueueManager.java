@@ -2,7 +2,7 @@ package com.capslock.im.component;
 
 import com.capslock.im.commons.deserializer.ClusterPacketDeserializer;
 import com.capslock.im.commons.model.LogicServerPeer;
-import com.capslock.im.commons.packet.cluster.Packet;
+import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.config.ConnServerCondition;
 import com.google.common.base.Charsets;
@@ -51,9 +51,9 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
     }
 
     @Override
-    protected void processMessageFromMessageQueue(final Packet packet) {
-        if (packet.getType() == PacketType.S2C) {
-            connectionManager.postMessage(packet);
+    protected void processMessageFromMessageQueue(final ClusterPacket clusterPacket) {
+        if (clusterPacket.getType() == PacketType.S2C) {
+            connectionManager.postMessage(clusterPacket);
         }
     }
 
@@ -63,8 +63,8 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
             public void handleDelivery(final String consumerTag, final Envelope envelope,
                     final AMQP.BasicProperties properties, final byte[] body) throws IOException {
                 final String rawData = new String(body, Charsets.UTF_8);
-                final Packet packet = ClusterPacketDeserializer.deserialize(rawData);
-                processMessageFromMessageQueue(packet);
+                final ClusterPacket clusterPacket = ClusterPacketDeserializer.deserialize(rawData);
+                processMessageFromMessageQueue(clusterPacket);
             }
         };
         channel.basicConsume(getClientQueueName(), true, consumer);
@@ -76,13 +76,13 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
     }
 
     @Override
-    public void processInboundMessage(final Packet packet) {
-        if (packet.getType() == PacketType.C2S) {
-            publishMessageToQueue(packet, (LogicServerPeer) packet.getTo());
+    public void processInboundMessage(final ClusterPacket clusterPacket) {
+        if (clusterPacket.getType() == PacketType.C2S) {
+            publishMessageToQueue(clusterPacket, (LogicServerPeer) clusterPacket.getTo());
         }
     }
 
-    private void publishMessageToQueue(final Packet message, final LogicServerPeer logicServerPeer) {
+    private void publishMessageToQueue(final ClusterPacket message, final LogicServerPeer logicServerPeer) {
         try {
             channel.basicPublish("", getLogicServerQueueName(logicServerPeer), null,
                     objectMapper.writeValueAsBytes(message));

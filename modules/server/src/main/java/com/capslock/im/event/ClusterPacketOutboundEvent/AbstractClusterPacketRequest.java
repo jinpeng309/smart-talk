@@ -1,7 +1,7 @@
 package com.capslock.im.event.ClusterPacketOutboundEvent;
 
 import com.capslock.im.commons.packet.AbstractMessageWithDispatchIndex;
-import com.capslock.im.commons.packet.ProtocolPacket;
+import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import lombok.Data;
 
@@ -10,6 +10,6 @@ import lombok.Data;
  */
 @Data
 public abstract class AbstractClusterPacketRequest extends AbstractMessageWithDispatchIndex {
-    private final ProtocolPacket packet;
+    private final AbstractSocketPacket packet;
     public abstract PacketType getType();
 }
