@@ -9,9 +9,8 @@ import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
-import com.capslock.im.commons.packet.inbound.request.SocketAuthRequestPacket;
-import com.capslock.im.commons.packet.outbound.response.AbstractSocketOutboundPacket;
-import com.capslock.im.commons.packet.outbound.response.SocketOutboundAuth;
+import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
+import com.capslock.im.commons.packet.outbound.SocketAuthResponse;
 import com.capslock.im.commons.serializer.PacketSerializer;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.ConnServerCondition;
@@ -105,12 +104,12 @@ public class ConnectionManager extends MessageReceiver<Packet> {
         final ClientPeer clientPeer = new ClientPeer(connId, authPacket.getDeviceUuid(), uid, localHost);
         final Connection connection = new Connection(clientPeer, ctx);
         addConnection(connection);
-        final SocketOutboundAuth packet = new SocketOutboundAuth(0);
+        final SocketAuthResponse packet = new SocketAuthResponse(0);
         writePacket(connection, packet);
         return true;
     }
 
-    public <T extends AbstractSocketOutboundPacket> void writePacket(final Connection connection, final T packet) {
+    public <T> void writePacket(final Connection connection, final T packet) {
         try {
             connection.write(PacketSerializer.serialize(packet));
         } catch (JsonProcessingException e) {

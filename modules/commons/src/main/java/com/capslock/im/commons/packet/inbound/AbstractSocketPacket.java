@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public abstract class AbstractSocketPacket {
-    private final long senderUid;
+    public abstract String getProtocolName();
 }
