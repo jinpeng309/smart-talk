@@ -1,4 +1,7 @@
-package com.capslock.im.event;
+package com.capslock.im.event.InternalEvent;
+
+import com.capslock.im.event.Event;
+import com.capslock.im.event.EventType;
 
 /**
  * Created by capslock1874.

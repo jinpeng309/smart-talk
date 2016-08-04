@@ -1,7 +1,9 @@
-package com.capslock.im.event;
+package com.capslock.im.event.ClusterPacketInboundEvent;
 
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
+import com.capslock.im.event.Event;
+import com.capslock.im.event.EventType;
 import lombok.Data;
 
 /**

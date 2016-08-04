@@ -1,4 +1,4 @@
-package com.capslock.im.model;
+package com.capslock.im.event.ClusterPacketOutboundEvent;
 
 import com.capslock.im.commons.packet.AbstractMessageWithDispatchIndex;
 import com.capslock.im.commons.packet.ProtocolPacket;

@@ -11,13 +11,13 @@ import com.capslock.im.commons.packet.cluster.SessionToClientPacket;
 import com.capslock.im.commons.packet.cluster.SessionToSessionPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.config.LogicServerCondition;
-import com.capslock.im.event.ClusterPacketInboundEvent;
-import com.capslock.im.event.ClusterPacketOutboundEvent;
+import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
+import com.capslock.im.event.ClusterPacketOutboundEvent.AbstractClusterPacketRequest;
+import com.capslock.im.event.ClusterPacketOutboundEvent.ClusterPacketOutboundEvent;
+import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketRequest;
+import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRequest;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
-import com.capslock.im.model.AbstractClusterPacketRequest;
-import com.capslock.im.model.SessionToClientPacketRequest;
-import com.capslock.im.model.SessionToSessionPacketRequest;
 import com.capslock.im.plugin.filter.EventFilter;
 import com.capslock.im.plugin.postProcessor.EventPostProcessor;
 import com.capslock.im.plugin.processor.InternalEventProcessor;
@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +162,10 @@ public class SessionManager extends MessageReceiver<Packet> {
                 getPacketProcessorList(protocolName), getPacketPostProcessor(protocolName));
     }
 
+    private ProcessItem createInternalEventProcessItem(final Session session, final Event event) {
+        return new ProcessItem(event, session);
+    }
+
     private void postProcessorItem(final ProcessItem processItem) {
         final int index = processItem.getEvent().getDispatchIndex();
         processorItemQueue.get(Math.abs(index) % processorItemQueue.size()).add(processItem);
@@ -265,12 +270,18 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     @Data
+    @AllArgsConstructor
     private static final class ProcessItem {
         private final Event event;
         private final Session session;
-        private final List<EventFilter> eventFilterList;
-        private final List<PacketEventProcessor> processorList;
-        private final List<EventPostProcessor> postProcessorList;
+        private List<EventFilter> eventFilterList;
+        private List<PacketEventProcessor> processorList;
+        private List<EventPostProcessor> postProcessorList;
+
+        public ProcessItem(final Event event, final Session session) {
+            this.event = event;
+            this.session = session;
+        }
     }
 
     private final class QueueListener extends Thread {
