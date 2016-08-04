@@ -227,13 +227,13 @@ public class SessionManager extends MessageReceiver<Event> {
 
     private void processSessionToSessionPacketRequest(final SessionToSessionPacketRequest request) {
         final long receiverUid = request.getReceiverUid();
+        final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
         final Session localSession = sessionMap.get(receiverUid);
-        if (localSession != null) {
+        if (localSession != null && localServerPeer.equals(toLogicServer)) {
             final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
                     request.getPacket(), request.getSenderClient(), receiverUid);
             postMessage(new ClusterPacketInboundEvent(outPacket));
         } else {
-            final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
             final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
                     request.getPacket(), request.getSenderClient(), receiverUid);
             postOutputMessage(outPacket);
