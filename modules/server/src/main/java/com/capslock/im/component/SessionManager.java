@@ -209,7 +209,7 @@ public class SessionManager extends MessageReceiver<Event> {
     }
 
     private void processOutputClusterPacketEvent(final ClusterPacketOutboundEvent event) {
-        switch (event.getReuqestType()) {
+        switch (event.getRequestType()) {
             case S2S:
                 processSessionToSessionPacketRequest((SessionToSessionPacketRequest) event.getRequest());
                 break;

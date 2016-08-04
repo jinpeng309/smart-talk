@@ -12,7 +12,7 @@ import lombok.Data;
 public class ClusterPacketOutboundEvent extends Event {
     private final AbstractClusterPacketRequest request;
 
-    public PacketType getReuqestType() {
+    public PacketType getRequestType() {
         return request.getType();
     }
 
