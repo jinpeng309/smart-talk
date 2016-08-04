@@ -6,6 +6,6 @@ import lombok.Data;
  * Created by capslock1874.
  */
 @Data
-public abstract class AbstractSocketInboundPacket {
+public abstract class AbstractSocketPacket {
     private final long senderUid;
 }

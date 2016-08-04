@@ -9,7 +9,7 @@ import com.capslock.im.commons.packet.ProtocolPacket;
 import com.capslock.im.commons.packet.cluster.ClientToSessionPacket;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
-import com.capslock.im.commons.packet.inbound.request.SocketInboundAuthPacket;
+import com.capslock.im.commons.packet.inbound.request.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.outbound.response.AbstractSocketOutboundPacket;
 import com.capslock.im.commons.packet.outbound.response.SocketOutboundAuth;
 import com.capslock.im.commons.serializer.PacketSerializer;
@@ -100,7 +100,7 @@ public class ConnectionManager extends MessageReceiver<Packet> {
     }
 
     public boolean authClient(final String connId, final ChannelHandlerContext ctx,
-            final SocketInboundAuthPacket authPacket) {
+            final SocketAuthRequestPacket authPacket) {
         final long uid = this.uid++;
         final ClientPeer clientPeer = new ClientPeer(connId, authPacket.getDeviceUuid(), uid, localHost);
         final Connection connection = new Connection(clientPeer, ctx);

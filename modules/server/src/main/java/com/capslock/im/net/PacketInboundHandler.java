@@ -2,7 +2,7 @@ package com.capslock.im.net;
 
 import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
 import com.capslock.im.commons.packet.ProtocolPacket;
-import com.capslock.im.commons.packet.inbound.request.SocketInboundAuthPacket;
+import com.capslock.im.commons.packet.inbound.request.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
 import com.capslock.im.component.ConnectionManager;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,7 +46,7 @@ public class PacketInboundHandler extends SimpleChannelInboundHandler<String> {
             ctx.close();
         } else if (!hasAuthorized) {
             ProtocolPacketDeserializer.deserialize(packet).ifPresent(p -> {
-                final SocketInboundAuthPacket authPacket = (SocketInboundAuthPacket) p;
+                final SocketAuthRequestPacket authPacket = (SocketAuthRequestPacket) p;
                 deviceUuid = authPacket.getDeviceUuid();
                 hasAuthorized = connectionManager.authClient(connId, ctx, authPacket);
             });

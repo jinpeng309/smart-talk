@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Protocol(PrivateChatMessageProtocol.NAME)
 @Getter
-public final class PrivateChatMessagePacket extends AbstractSocketInboundPacket {
+public final class PrivateChatMessagePacket extends AbstractSocketPacket {
     private final long to;
     private final String content;
 
