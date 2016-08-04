@@ -18,6 +18,11 @@ public class StorePrivateChatMessageRequestEvent extends InternalEvent {
     }
 
     @Override
+    public long getOwnerUid() {
+        return owner.getUid();
+    }
+
+    @Override
     public InternalEventType getInternalEventType() {
         return InternalEventType.STORE_PRIVATE_CHAT_MESSAGE_REQUEST;
     }

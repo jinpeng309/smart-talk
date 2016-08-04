@@ -8,6 +8,8 @@ import com.capslock.im.event.EventType;
  */
 public abstract class InternalEvent extends Event {
 
+    public abstract long getOwnerUid();
+
     public abstract InternalEventType getInternalEventType();
     @Override
     public EventType getType() {

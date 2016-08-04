@@ -167,6 +167,9 @@ public class SessionManager extends MessageReceiver<Event> {
             final Session session = getOrCreateSession(client.getUid());
             postProcessorItem(createClusterPacketInboundProcessItem(session, packet));
         } else if (event.getType() == EventType.INTERNAL) {
+            final InternalEvent internalEvent = (InternalEvent) event;
+            final Session session = getOrCreateSession(internalEvent.getOwnerUid());
+            postProcessorItem(createInternalEventProcessItem(session, event));
         }
 
     }

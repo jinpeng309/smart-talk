@@ -8,11 +8,16 @@ import lombok.Data;
  */
 @Data
 public class StorePrivateChatMessageSuccessEvent extends InternalEvent {
-    private final ClientPeer clientPeer;
+    private final ClientPeer owner;
 
     @Override
     public int getDispatchIndex() {
-        return (int) clientPeer.getUid();
+        return (int) owner.getUid();
+    }
+
+    @Override
+    public long getOwnerUid() {
+        return owner.getUid();
     }
 
     @Override
