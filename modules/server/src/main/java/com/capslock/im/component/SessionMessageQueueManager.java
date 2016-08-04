@@ -83,7 +83,7 @@ public class SessionMessageQueueManager extends MessageQueueManager {
     }
 
     @Override
-    public String getComponentName() {
+    public String getName() {
         return "sm-mq";
     }
 

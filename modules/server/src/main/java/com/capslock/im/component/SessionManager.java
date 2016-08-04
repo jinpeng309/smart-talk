@@ -19,10 +19,12 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRe
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import com.capslock.im.event.InternalEvent.InternalEvent;
+import com.capslock.im.event.InternalEvent.StorePrivateChatMessageRequestEvent;
 import com.capslock.im.plugin.filter.EventFilter;
 import com.capslock.im.plugin.postProcessor.EventPostProcessor;
 import com.capslock.im.plugin.processor.InternalEventProcessor;
 import com.capslock.im.plugin.processor.PacketEventProcessor;
+import com.capslock.im.service.MessageService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -73,6 +75,9 @@ public class SessionManager extends MessageReceiver<Event> {
     @Autowired
     private SessionMessageQueueManager sessionMessageQueueManager;
 
+    @Autowired
+    private MessageService messageService;
+
     private final ConcurrentHashMap<Long, Session> sessionMap = new ConcurrentHashMap<>(10000);
 
     private ImmutableMap<String, List<PacketEventProcessor>> processorMap;
@@ -86,8 +91,13 @@ public class SessionManager extends MessageReceiver<Event> {
     private LogicServerPeer localServerPeer;
 
     @Override
-    public String getComponentName() {
+    public String getName() {
         return "sm";
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.COMPUTATION;
     }
 
     @PostConstruct
@@ -113,7 +123,7 @@ public class SessionManager extends MessageReceiver<Event> {
                 processorItemQueue.add(queue);
                 final QueueListener queueListener = new QueueListener(queue);
                 processorItemListener.add(queueListener);
-                queueListener.setName(getComponentName() + "-inbound-thread-" + i);
+                queueListener.setName(getName() + "-inbound-thread-" + i);
                 queueListener.start();
             }
         }
@@ -264,8 +274,7 @@ public class SessionManager extends MessageReceiver<Event> {
     private void processOutputInternalEvent(final InternalEvent event) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
-                break;
-            case STORE_PRIVATE_CHAT_MESSAGE_SUCCEED:
+                messageService.processStorePrivateChatMessageEvent((StorePrivateChatMessageRequestEvent) event);
                 break;
         }
     }

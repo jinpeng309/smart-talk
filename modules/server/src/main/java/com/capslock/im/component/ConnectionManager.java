@@ -59,7 +59,7 @@ public class ConnectionManager extends MessageReceiver<Packet> {
     private EventBus connServerClusterEventBus;
 
     @Override
-    public String getComponentName() {
+    public String getName() {
         return "c2s";
     }
 
@@ -139,5 +139,10 @@ public class ConnectionManager extends MessageReceiver<Packet> {
             connectedClientsCache.removeClient(client.getUid(), client.getConnServerNodeIp());
             connectionMap.remove(deviceUuid);
         });
+    }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.COMPUTATION;
     }
 }

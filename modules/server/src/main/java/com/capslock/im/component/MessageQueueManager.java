@@ -50,4 +50,9 @@ public abstract class MessageQueueManager extends MessageReceiver<Packet> {
         channel = connection.createChannel();
         initQueue();
     }
+
+    @Override
+    public SchedulerType getSchedulerType() {
+        return SchedulerType.IO;
+    }
 }

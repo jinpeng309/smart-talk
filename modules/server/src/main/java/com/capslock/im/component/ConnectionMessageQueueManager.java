@@ -71,7 +71,7 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
     }
 
     @Override
-    public String getComponentName() {
+    public String getName() {
         return "cm-mq";
     }
 
