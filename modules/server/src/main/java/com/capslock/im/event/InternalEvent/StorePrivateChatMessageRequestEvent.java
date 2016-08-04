@@ -16,4 +16,9 @@ public class StorePrivateChatMessageRequestEvent extends InternalEvent {
     public int getDispatchIndex() {
         return (int) owner.getUid();
     }
+
+    @Override
+    public InternalEventType getInternalEventType() {
+        return InternalEventType.STORE_PRIVATE_CHAT_MESSAGE_REQUEST;
+    }
 }

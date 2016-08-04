@@ -18,6 +18,7 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketReq
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRequest;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
+import com.capslock.im.event.InternalEvent.InternalEvent;
 import com.capslock.im.plugin.filter.EventFilter;
 import com.capslock.im.plugin.postProcessor.EventPostProcessor;
 import com.capslock.im.plugin.processor.InternalEventProcessor;
@@ -256,8 +257,20 @@ public class SessionManager extends MessageReceiver<Packet> {
                 case CLUSTER_PACKET_OUTBOUND:
                     processOutputClusterPacketEvent((ClusterPacketOutboundEvent) event);
                     break;
+                case INTERNAL:
+                    processOutputInternalEvent((InternalEvent) event);
+                    break;
             }
         });
+    }
+
+    private void processOutputInternalEvent(final InternalEvent event) {
+        switch (event.getInternalEventType()) {
+            case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
+                break;
+            case STORE_PRIVATE_CHAT_MESSAGE_SUCCEED:
+                break;
+        }
     }
 
     public void stop() {

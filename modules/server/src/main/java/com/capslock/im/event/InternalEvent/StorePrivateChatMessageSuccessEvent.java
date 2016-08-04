@@ -14,4 +14,9 @@ public class StorePrivateChatMessageSuccessEvent extends InternalEvent {
     public int getDispatchIndex() {
         return (int) clientPeer.getUid();
     }
+
+    @Override
+    public InternalEventType getInternalEventType() {
+        return InternalEventType.STORE_PRIVATE_CHAT_MESSAGE_SUCCEED;
+    }
 }
