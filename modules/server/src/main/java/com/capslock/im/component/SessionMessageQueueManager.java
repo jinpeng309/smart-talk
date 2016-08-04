@@ -7,6 +7,7 @@ import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.Packet;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.config.LogicServerCondition;
+import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
 import com.google.common.base.Charsets;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
@@ -78,7 +79,7 @@ public class SessionMessageQueueManager extends MessageQueueManager {
 
     @Override
     protected void processMessageFromMessageQueue(final Packet packet) {
-        sessionManager.postMessage(packet);
+        sessionManager.postMessage(new ClusterPacketInboundEvent(packet));
     }
 
     @Override

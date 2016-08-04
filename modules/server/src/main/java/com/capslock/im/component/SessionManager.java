@@ -52,7 +52,7 @@ import java.util.concurrent.TransferQueue;
  */
 @Component
 @Conditional(LogicServerCondition.class)
-public class SessionManager extends MessageReceiver<Packet> {
+public class SessionManager extends MessageReceiver<Event> {
     @Autowired
     private ConnectedClientsCache connectedClientsCache;
 
@@ -151,10 +151,15 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     @Override
-    public void processInboundMessage(final Packet packet) {
-        final ClientPeer client = (ClientPeer) packet.getFrom();
-        final Session session = getOrCreateSession(client.getUid());
-        postProcessorItem(createClusterPacketInboundProcessItem(session, packet));
+    public void processInboundMessage(final Event event) {
+        if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
+            final Packet packet = ((ClusterPacketInboundEvent) event).getPacket();
+            final ClientPeer client = (ClientPeer) packet.getFrom();
+            final Session session = getOrCreateSession(client.getUid());
+            postProcessorItem(createClusterPacketInboundProcessItem(session, packet));
+        } else if (event.getType() == EventType.INTERNAL) {
+        }
+
     }
 
     private ProcessItem createClusterPacketInboundProcessItem(final Session session, final Packet packet) {
@@ -181,19 +186,11 @@ public class SessionManager extends MessageReceiver<Packet> {
     }
 
     private List<PacketEventProcessor> getPacketProcessorList(final String protocol) {
-        List<PacketEventProcessor> result = processorMap.get(protocol);
-        if (result == null) {
-            result = Collections.emptyList();
-        }
-        return result;
+        return processorMap.getOrDefault(protocol, Collections.emptyList());
     }
 
     private List<EventPostProcessor> getPacketPostProcessor(final String protocol) {
-        List<EventPostProcessor> result = packetPostPacketMap.get(protocol);
-        if (result == null) {
-            result = Collections.emptyList();
-        }
-        return result;
+        return packetPostPacketMap.getOrDefault(protocol, Collections.emptyList());
     }
 
     private void postOutputMessage(final Packet packet) {
@@ -223,7 +220,7 @@ public class SessionManager extends MessageReceiver<Packet> {
         if (localSession != null) {
             final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, localServerPeer,
                     request.getPacket(), request.getSenderClient(), receiverUid);
-            postMessage(outPacket);
+            postMessage(new ClusterPacketInboundEvent(outPacket));
         } else {
             final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
             final SessionToSessionPacket outPacket = new SessionToSessionPacket(localServerPeer, toLogicServer,
