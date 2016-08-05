@@ -4,7 +4,9 @@ import com.capslock.im.cluster.event.LogicServerNodeAddEvent;
 import com.capslock.im.cluster.event.LogicServerNodeRemovedEvent;
 import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.StorageServerPeer;
 import com.capslock.im.component.ComponentIfc;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
@@ -75,6 +77,10 @@ public class ClusterManager implements ComponentIfc {
 
     public List<ConnServerPeer> getConnServerList() {
         return connServerPeers;
+    }
+
+    public List<StorageServerPeer> getStorageServerList() {
+        return ImmutableList.of();
     }
 
     public List<LogicServerPeer> getLogicServerList() {
