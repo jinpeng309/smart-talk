@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Conditional(StorageServerCondition.class)
 public class StorageManager extends MessageReceiver<Event> {
+
+    public void start() {
+
+    }
+
     @Override
     public String getName() {
         return "storage-manager";

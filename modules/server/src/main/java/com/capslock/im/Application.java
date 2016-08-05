@@ -1,6 +1,7 @@
 package com.capslock.im;
 
 import com.capslock.im.component.session.SessionManager;
+import com.capslock.im.component.storage.StorageManager;
 import com.capslock.im.config.StartServerTypeConfig;
 import com.capslock.im.net.Connector;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class Application implements CommandLineRunner {
             context.getBean(Connector.class).start();
         } else if (StartServerTypeConfig.LOGIC_SERVER.equals(startType)) {
             context.getBean(SessionManager.class).start();
+        } else if (StartServerTypeConfig.STORAGE_SERVER.equals(startType)) {
+            context.getBean(StorageManager.class).start();
         }
     }
 }
