@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by capslock1874.
@@ -27,22 +26,12 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
     @Autowired
     private ConnectionManager connectionManager;
     private String clientQueueName;
-    private ConcurrentHashMap<String, String> logicServerNameMap = new ConcurrentHashMap<>();
 
     private String getClientQueueName() {
         if (clientQueueName == null) {
             clientQueueName = getConnServerQueueNamePrefix() + getLocalHost();
         }
         return clientQueueName;
-    }
-
-    private String getLogicServerQueueName(final LogicServerPeer logicServerPeer) {
-        String queueName = logicServerNameMap.get(logicServerPeer.getServerIp());
-        if (queueName == null) {
-            queueName = getLogicServerQueueNamePrefix() + logicServerPeer.getServerIp();
-            logicServerNameMap.put(logicServerPeer.getServerIp(), queueName);
-        }
-        return queueName;
     }
 
     @Override

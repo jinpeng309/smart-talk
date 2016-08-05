@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by capslock1874.
@@ -28,8 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Conditional(LogicServerCondition.class)
 public class SessionMessageQueueManager extends MessageQueueManager {
     private String logicServerQueueName;
-    private ConcurrentHashMap<String, String> connServerNameMap = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, String> logicServerNameMap = new ConcurrentHashMap<>();
 
     @Autowired
     private SessionManager sessionManager;
@@ -38,24 +35,6 @@ public class SessionMessageQueueManager extends MessageQueueManager {
     protected void initQueue() throws IOException {
         channel.queueDeclare(getLogicServerName(), false, false, false, null);
         addLogicServerQueueConsumer();
-    }
-
-    private String getLogicServerQueueName(final LogicServerPeer logicServerPeer) {
-        String queueName = logicServerNameMap.get(logicServerPeer.getServerIp());
-        if (queueName == null) {
-            queueName = getLogicServerQueueNamePrefix() + "_" + logicServerPeer.getServerIp();
-            logicServerNameMap.put(logicServerPeer.getServerIp(), queueName);
-        }
-        return queueName;
-    }
-
-    private String getConnServerQueueName(final ConnServerPeer logicServerPeer) {
-        String queueName = connServerNameMap.get(logicServerPeer.getServerIp());
-        if (queueName == null) {
-            queueName = getConnServerQueueNamePrefix() + logicServerPeer.getServerIp();
-            connServerNameMap.put(logicServerPeer.getServerIp(), queueName);
-        }
-        return queueName;
     }
 
     private void addLogicServerQueueConsumer() throws IOException {

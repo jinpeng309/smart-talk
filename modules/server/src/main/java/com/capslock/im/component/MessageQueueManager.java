@@ -1,5 +1,7 @@
 package com.capslock.im.component;
 
+import com.capslock.im.commons.model.ConnServerPeer;
+import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.util.NetUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,10 +24,17 @@ public abstract class MessageQueueManager extends MessageReceiver<ClusterPacket>
     protected Channel channel;
     protected String localHost;
 
+    protected String getLogicServerQueueName(final LogicServerPeer logicServerPeer) {
+        return getLogicServerQueueNamePrefix() + "_" + logicServerPeer.getServerIp();
+    }
+
+    protected String getConnServerQueueName(final ConnServerPeer logicServerPeer) {
+        return getConnServerQueueNamePrefix() + logicServerPeer.getServerIp();
+    }
+
     abstract protected void initQueue() throws IOException;
 
     abstract protected void processMessageFromMessageQueue(final ClusterPacket clusterPacket);
-
 
     protected String getConnServerQueueNamePrefix() {
         return "cm_";
@@ -35,7 +44,11 @@ public abstract class MessageQueueManager extends MessageReceiver<ClusterPacket>
         return "sm_";
     }
 
-    protected String getExchangeName(){
+    protected String getStorageServerQueueNamePrefix() {
+        return "storage_";
+    }
+
+    protected String getExchangeName() {
         return "talk";
     }
 

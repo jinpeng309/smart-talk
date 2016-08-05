@@ -14,4 +14,5 @@ public final class StartServerTypeConfig {
     public static final String SERVER_TYPE = "server.type";
     public static final String LOGIC_SERVER = "logic";
     public static final String CONNECTION_SERVER = "connection";
+    public static final String STORAGE_SERVER = "storage";
 }
