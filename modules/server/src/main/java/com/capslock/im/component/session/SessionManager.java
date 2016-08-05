@@ -20,7 +20,7 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketReq
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRequest;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
-import com.capslock.im.event.InternalEvent.InternalEvent;
+import com.capslock.im.event.rpcEvent.RpcEvent;
 import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
 import com.capslock.im.processor.processor.InternalEventProcessor;
@@ -168,10 +168,10 @@ public class SessionManager extends MessageReceiver<Event> {
             final ClientPeer client = (ClientPeer) clusterPacket.getFrom();
             final Session session = getOrCreateSession(client.getUid());
             postProcessorItem(createClusterPacketInboundProcessItem(session, clusterPacket));
-        } else if (event.getType() == EventType.INTERNAL) {
-            final InternalEvent internalEvent = (InternalEvent) event;
-            final Session session = getOrCreateSession(internalEvent.getOwnerUid());
-            postProcessorItem(createInternalEventProcessItem(session, event));
+        } else if (event.getType() == EventType.RPC) {
+            final RpcEvent rpcEvent = (RpcEvent) event;
+            final Session session = getOrCreateSession(rpcEvent.getOwnerUid());
+            postProcessorItem(createRpcEventProcessItem(session, event));
         }
     }
 
@@ -181,7 +181,7 @@ public class SessionManager extends MessageReceiver<Event> {
                 getPacketProcessorList(protocolName), getPacketPostProcessor(protocolName));
     }
 
-    private ProcessItem createInternalEventProcessItem(final Session session, final Event event) {
+    private ProcessItem createRpcEventProcessItem(final Session session, final Event event) {
         return new ProcessItem(event, session);
     }
 
@@ -267,17 +267,16 @@ public class SessionManager extends MessageReceiver<Event> {
                 case CLUSTER_PACKET_OUTBOUND:
                     processOutputClusterPacketEvent((ClusterPacketOutboundEvent) event);
                     break;
-                case INTERNAL:
-                    processOutputInternalEvent((InternalEvent) event);
+                case RPC:
+                    processOutputInternalEvent((RpcEvent) event);
                     break;
             }
         });
     }
 
-    private void processOutputInternalEvent(final InternalEvent event) {
+    private void processOutputInternalEvent(final RpcEvent event) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
-                messageService.postMessage(event);
                 break;
         }
     }
@@ -336,8 +335,8 @@ public class SessionManager extends MessageReceiver<Event> {
                             item.getProcessorList().forEach(processor -> processor.process(event, session, output));
                             item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
                         }
-                    } else if (event.getType() == EventType.INTERNAL) {
-                        internalEventProcessor.process((InternalEvent) event, session, output);
+                    } else if (event.getType() == EventType.RPC) {
+                        internalEventProcessor.process((RpcEvent) event, session, output);
                     }
 
                     processOutputEvent(output);

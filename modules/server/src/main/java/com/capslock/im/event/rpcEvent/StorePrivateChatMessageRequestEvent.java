@@ -1,14 +1,16 @@
-package com.capslock.im.event.InternalEvent;
+package com.capslock.im.event.rpcEvent;
 
 import com.capslock.im.commons.model.ClientPeer;
+import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import lombok.Data;
 
 /**
  * Created by capslock1874.
  */
 @Data
-public class StorePrivateChatMessageSuccessEvent extends InternalEvent {
+public class StorePrivateChatMessageRequestEvent extends RpcEvent {
     private final ClientPeer owner;
+    private final PrivateChatMessagePacket packet;
 
     @Override
     public int getDispatchIndex() {
@@ -21,7 +23,7 @@ public class StorePrivateChatMessageSuccessEvent extends InternalEvent {
     }
 
     @Override
-    public InternalEventType getInternalEventType() {
-        return InternalEventType.STORE_PRIVATE_CHAT_MESSAGE_SUCCEED;
+    public RpcEventType getInternalEventType() {
+        return RpcEventType.STORE_PRIVATE_CHAT_MESSAGE_REQUEST;
     }
 }

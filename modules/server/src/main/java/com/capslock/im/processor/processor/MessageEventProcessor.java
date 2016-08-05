@@ -15,7 +15,7 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketReq
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRequest;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
-import com.capslock.im.event.InternalEvent.StorePrivateChatMessageRequestEvent;
+import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
 
 import java.util.ArrayList;
 

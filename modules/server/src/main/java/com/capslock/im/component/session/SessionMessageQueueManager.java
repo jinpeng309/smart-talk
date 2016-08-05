@@ -10,6 +10,7 @@ import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.component.MessageQueueManager;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
+import com.capslock.im.event.rpcEvent.ClusterPacketRpcEvent;
 import com.google.common.base.Charsets;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
@@ -60,7 +61,12 @@ public class SessionMessageQueueManager extends MessageQueueManager {
 
     @Override
     protected void processMessageFromMessageQueue(final ClusterPacket clusterPacket) {
-        sessionManager.postMessage(new ClusterPacketInboundEvent(clusterPacket));
+        final PacketType packetType = clusterPacket.getType();
+        if (packetType == PacketType.C2S || packetType == PacketType.S2S) {
+            sessionManager.postMessage(new ClusterPacketInboundEvent(clusterPacket));
+        } else if (packetType == PacketType.ST2S) {
+            sessionManager.postMessage(new ClusterPacketRpcEvent(clusterPacket));
+        }
     }
 
     @Override

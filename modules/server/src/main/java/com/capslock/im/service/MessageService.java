@@ -3,9 +3,9 @@ package com.capslock.im.service;
 import com.capslock.im.component.MessageReceiver;
 import com.capslock.im.component.session.SessionManager;
 import com.capslock.im.event.Event;
-import com.capslock.im.event.InternalEvent.InternalEvent;
-import com.capslock.im.event.InternalEvent.StorePrivateChatMessageRequestEvent;
-import com.capslock.im.event.InternalEvent.StorePrivateChatMessageSuccessEvent;
+import com.capslock.im.event.rpcEvent.RpcEvent;
+import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
+import com.capslock.im.event.rpcEvent.StorePrivateChatMessageSuccessEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +33,10 @@ public class MessageService extends MessageReceiver<Event> {
 
     @Override
     public void processInboundMessage(final Event event) {
-        final InternalEvent internalEvent = (InternalEvent) event;
-        switch (((InternalEvent) event).getInternalEventType()) {
+        final RpcEvent rpcEvent = (RpcEvent) event;
+        switch (((RpcEvent) event).getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
-                processStorePrivateChatMessageEvent((StorePrivateChatMessageRequestEvent) internalEvent);
+                processStorePrivateChatMessageEvent((StorePrivateChatMessageRequestEvent) rpcEvent);
                 break;
         }
     }
