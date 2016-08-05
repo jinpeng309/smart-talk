@@ -8,7 +8,7 @@ import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import com.capslock.im.commons.packet.protocol.PrivateChatMessageProtocol;
-import com.capslock.im.component.Session;
+import com.capslock.im.component.session.Session;
 import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent.ClusterPacketOutboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketRequest;

@@ -1,6 +1,6 @@
 package com.capslock.im;
 
-import com.capslock.im.component.SessionManager;
+import com.capslock.im.component.session.SessionManager;
 import com.capslock.im.config.StartServerTypeConfig;
 import com.capslock.im.net.Connector;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.capslock.im.net;
 
-import com.capslock.im.component.ConnectionManager;
+import com.capslock.im.component.connection.ConnectionManager;
 import com.capslock.im.config.ConnServerCondition;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

@@ -1,4 +1,4 @@
-package com.capslock.im.component;
+package com.capslock.im.component.connection;
 
 import com.capslock.im.cluster.ClusterManager;
 import com.capslock.im.cluster.LogicServerNodeSelector;
@@ -12,6 +12,8 @@ import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.outbound.SocketAuthResponse;
 import com.capslock.im.commons.util.NetUtils;
+import com.capslock.im.component.ConnectedClientsCache;
+import com.capslock.im.component.MessageReceiver;
 import com.capslock.im.config.ConnServerCondition;
 import com.google.common.eventbus.EventBus;
 import io.netty.channel.ChannelHandlerContext;

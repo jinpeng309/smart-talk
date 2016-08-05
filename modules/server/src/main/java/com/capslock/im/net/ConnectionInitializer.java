@@ -1,6 +1,6 @@
 package com.capslock.im.net;
 
-import com.capslock.im.component.ConnectionManager;
+import com.capslock.im.component.connection.ConnectionManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

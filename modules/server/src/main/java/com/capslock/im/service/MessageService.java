@@ -1,7 +1,7 @@
 package com.capslock.im.service;
 
 import com.capslock.im.component.MessageReceiver;
-import com.capslock.im.component.SessionManager;
+import com.capslock.im.component.session.SessionManager;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.InternalEvent.InternalEvent;
 import com.capslock.im.event.InternalEvent.StorePrivateChatMessageRequestEvent;
@@ -18,7 +18,6 @@ public class MessageService extends MessageReceiver<Event> {
     private SessionManager sessionManager;
 
     private void processStorePrivateChatMessageEvent(final StorePrivateChatMessageRequestEvent event) {
-        //todo store message
         sessionManager.postMessage(new StorePrivateChatMessageSuccessEvent(event.getOwner()));
     }
 

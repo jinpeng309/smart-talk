@@ -1,4 +1,4 @@
-package com.capslock.im.component;
+package com.capslock.im.component.session;
 
 import com.capslock.im.commons.deserializer.ClusterPacketDeserializer;
 import com.capslock.im.commons.model.ClientPeer;
@@ -6,6 +6,7 @@ import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
+import com.capslock.im.component.MessageQueueManager;
 import com.capslock.im.config.LogicServerCondition;
 import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
 import com.google.common.base.Charsets;

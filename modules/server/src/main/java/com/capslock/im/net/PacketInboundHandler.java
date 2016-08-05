@@ -4,7 +4,7 @@ import com.capslock.im.commons.deserializer.ProtocolPacketDeserializer;
 import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.protocol.AuthenticationProtocol;
-import com.capslock.im.component.ConnectionManager;
+import com.capslock.im.component.connection.ConnectionManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
