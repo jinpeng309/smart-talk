@@ -26,8 +26,8 @@ import com.capslock.im.event.rpcEvent.RpcEvent;
 import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
 import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
-import com.capslock.im.processor.processor.InternalEventProcessor;
 import com.capslock.im.processor.processor.PacketEventProcessor;
+import com.capslock.im.processor.processor.RpcEventProcessor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -83,7 +83,7 @@ public class SessionManager extends MessageReceiver<Event> {
     private ImmutableMap<String, List<PacketEventProcessor>> processorMap;
     private ImmutableMap<String, List<EventFilter>> packetFilterMap;
     private ImmutableMap<String, List<EventPostProcessor>> packetPostPacketMap;
-    private InternalEventProcessor internalEventProcessor = new InternalEventProcessor();
+    private RpcEventProcessor rpcEventProcessor = new RpcEventProcessor();
     private final ArrayList<TransferQueue<ProcessItem>> processorItemQueue = new ArrayList<>();
     private final ArrayList<QueueListener> processorItemListener = new ArrayList<>();
 
@@ -340,7 +340,7 @@ public class SessionManager extends MessageReceiver<Event> {
                             item.getPostProcessorList().forEach(processor -> processor.process(event, session, output));
                         }
                     } else if (event.getType() == EventType.RPC) {
-                        internalEventProcessor.process((RpcEvent) event, session, output);
+                        rpcEventProcessor.process((RpcEvent) event, session, output);
                     }
 
                     processOutputEvent(output);

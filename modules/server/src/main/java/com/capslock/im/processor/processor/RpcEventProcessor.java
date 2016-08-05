@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Created by capslock1874.
  */
-public class InternalEventProcessor {
+public class RpcEventProcessor {
     public void process(final RpcEvent event, final Session session, final ArrayList<Event> output) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_SUCCEED:
