@@ -4,6 +4,7 @@ import com.capslock.im.commons.deserializer.ClusterPacketDeserializer;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.StorageServerPeer;
 import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.component.MessageQueueManager;
@@ -69,19 +70,30 @@ public class SessionMessageQueueManager extends MessageQueueManager {
 
     @Override
     public void processInboundMessage(final ClusterPacket clusterPacket) {
-        if (clusterPacket.getType() == PacketType.S2C) {
+        final PacketType packetType = clusterPacket.getType();
+        if (packetType == PacketType.S2C) {
             final ClientPeer clientPeer = (ClientPeer) clusterPacket.getTo();
             final ConnServerPeer connServerPeer = new ConnServerPeer(clientPeer.getConnServerNodeIp());
             publishMessageToConnServerQueue(clusterPacket, connServerPeer);
-        } else if (clusterPacket.getType() == PacketType.S2S) {
+        } else if (packetType == PacketType.S2S) {
             publishMessageToLogicServerQueue(clusterPacket, (LogicServerPeer) clusterPacket.getTo());
+        } else if (packetType == PacketType.S2ST) {
+            publishMessageToStorageServerQueue(clusterPacket, (StorageServerPeer) clusterPacket.getTo());
         }
     }
 
-    private void publishMessageToLogicServerQueue(final ClusterPacket message, final LogicServerPeer logicServerPeer) {
+    private void publishMessageToStorageServerQueue(final ClusterPacket clusterPacket, final StorageServerPeer to) {
+        try {
+            channel.basicPublish("", getStorageServerQueueName(to), null, objectMapper.writeValueAsBytes(clusterPacket));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void publishMessageToLogicServerQueue(final ClusterPacket clusterPacket, final LogicServerPeer logicServerPeer) {
         try {
             channel.basicPublish("", getLogicServerQueueName(logicServerPeer), null,
-                    objectMapper.writeValueAsBytes(message));
+                    objectMapper.writeValueAsBytes(clusterPacket));
         } catch (IOException e) {
             e.printStackTrace();
         }
