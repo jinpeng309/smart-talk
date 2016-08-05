@@ -28,7 +28,6 @@ import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
 import com.capslock.im.processor.processor.InternalEventProcessor;
 import com.capslock.im.processor.processor.PacketEventProcessor;
-import com.capslock.im.service.MessageService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -78,9 +77,6 @@ public class SessionManager extends MessageReceiver<Event> {
 
     @Autowired
     private SessionMessageQueueManager sessionMessageQueueManager;
-
-    @Autowired
-    private MessageService messageService;
 
     private final ConcurrentHashMap<Long, Session> sessionMap = new ConcurrentHashMap<>(10000);
 
