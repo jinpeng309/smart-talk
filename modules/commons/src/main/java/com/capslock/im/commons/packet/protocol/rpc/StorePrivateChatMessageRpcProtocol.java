@@ -4,6 +4,8 @@ package com.capslock.im.commons.packet.protocol.rpc;
  * Created by capslock1874.
  */
 public class StorePrivateChatMessageRpcProtocol {
+    public static final String NAME = "storePrivateChatMessage";
+
     /**
      * Don't let anyone instantiate this class.
      */

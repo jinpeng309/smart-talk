@@ -9,6 +9,8 @@ import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.SessionToClientClusterPacket;
 import com.capslock.im.commons.packet.cluster.SessionToSessionClusterPacket;
+import com.capslock.im.commons.packet.cluster.SessionToStorageClusterPacket;
+import com.capslock.im.commons.packet.rpc.StorePrivateChatMessageRpcRequest;
 import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.component.ConnectedClientsCache;
 import com.capslock.im.component.MessageReceiver;
@@ -21,6 +23,7 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRe
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import com.capslock.im.event.rpcEvent.RpcEvent;
+import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
 import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
 import com.capslock.im.processor.processor.InternalEventProcessor;
@@ -277,6 +280,11 @@ public class SessionManager extends MessageReceiver<Event> {
     private void processOutputRpcEvent(final RpcEvent event) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
+                final StorePrivateChatMessageRequestEvent rpcEvent = (StorePrivateChatMessageRequestEvent) event;
+                final StorePrivateChatMessageRpcRequest request = new StorePrivateChatMessageRpcRequest(rpcEvent.getOwner(),
+                        rpcEvent.getPacket());
+                sessionMessageQueueManager.postMessage(new SessionToStorageClusterPacket(localServerPeer, null,
+                        request.getProtocolName(), request, rpcEvent.getOwner()));
                 break;
         }
     }
