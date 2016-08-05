@@ -268,13 +268,13 @@ public class SessionManager extends MessageReceiver<Event> {
                     processOutputClusterPacketEvent((ClusterPacketOutboundEvent) event);
                     break;
                 case RPC:
-                    processOutputInternalEvent((RpcEvent) event);
+                    processOutputRpcEvent((RpcEvent) event);
                     break;
             }
         });
     }
 
-    private void processOutputInternalEvent(final RpcEvent event) {
+    private void processOutputRpcEvent(final RpcEvent event) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
                 break;
