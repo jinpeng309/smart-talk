@@ -1,13 +1,13 @@
 package com.capslock.im.processor.processor.rpc;
 
 import com.capslock.im.commons.packet.outbound.SocketAckResponse;
-import com.capslock.im.component.session.Session;
 import com.capslock.im.event.ClusterPacketOutboundEvent.ClusterPacketOutboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketRequest;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.rpcEvent.RpcEvent;
 import com.capslock.im.event.rpcEvent.RpcEventType;
 import com.capslock.im.event.rpcEvent.StorePrivateChatMessageSuccessEvent;
+import com.capslock.im.model.Session;
 
 import java.util.ArrayList;
 

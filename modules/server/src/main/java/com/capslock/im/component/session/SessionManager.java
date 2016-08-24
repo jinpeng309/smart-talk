@@ -24,6 +24,7 @@ import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import com.capslock.im.event.rpcEvent.RpcEvent;
 import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
+import com.capslock.im.model.Session;
 import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
 import com.capslock.im.processor.processor.PacketEventProcessor;

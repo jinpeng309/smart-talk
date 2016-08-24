@@ -8,7 +8,6 @@ import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import com.capslock.im.commons.packet.protocol.PrivateChatMessageProtocol;
-import com.capslock.im.component.session.Session;
 import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent.ClusterPacketOutboundEvent;
 import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToClientPacketRequest;
@@ -16,6 +15,7 @@ import com.capslock.im.event.ClusterPacketOutboundEvent.SessionToSessionPacketRe
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
+import com.capslock.im.model.Session;
 
 import java.util.ArrayList;
 

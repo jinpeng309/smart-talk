@@ -15,6 +15,7 @@ import com.capslock.im.commons.util.NetUtils;
 import com.capslock.im.component.ConnectedClientsCache;
 import com.capslock.im.component.MessageReceiver;
 import com.capslock.im.config.ConnServerCondition;
+import com.capslock.im.model.Connection;
 import com.google.common.eventbus.EventBus;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;

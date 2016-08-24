@@ -1,4 +1,4 @@
-package com.capslock.im.component.connection;
+package com.capslock.im.model;
 
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.packet.AbstractSocketPacket;

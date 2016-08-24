@@ -1,4 +1,4 @@
-package com.capslock.im.component.session;
+package com.capslock.im.model;
 
 import com.capslock.im.commons.model.ClientPeer;
 import lombok.Data;
