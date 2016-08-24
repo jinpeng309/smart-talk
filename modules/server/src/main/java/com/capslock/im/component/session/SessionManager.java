@@ -27,7 +27,7 @@ import com.capslock.im.event.rpcEvent.StorePrivateChatMessageRequestEvent;
 import com.capslock.im.processor.filter.EventFilter;
 import com.capslock.im.processor.postProcessor.EventPostProcessor;
 import com.capslock.im.processor.processor.PacketEventProcessor;
-import com.capslock.im.processor.processor.RpcEventProcessor;
+import com.capslock.im.processor.processor.rpc.RpcEventProcessor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
