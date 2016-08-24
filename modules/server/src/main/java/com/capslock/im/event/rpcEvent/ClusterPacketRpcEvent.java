@@ -4,10 +4,12 @@ import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.event.Event;
 import com.capslock.im.event.EventType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by capslock1874.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ClusterPacketRpcEvent extends Event {
     private final ClusterPacket clusterPacket;

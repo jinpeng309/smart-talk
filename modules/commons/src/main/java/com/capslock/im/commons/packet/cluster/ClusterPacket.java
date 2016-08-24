@@ -6,11 +6,13 @@ import com.capslock.im.commons.packet.AbstractSocketPacket;
 import com.capslock.im.commons.packet.protocol.ClusterProtocol;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by capslock1874.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public abstract class ClusterPacket extends AbstractMessageWithDispatchIndex {
     @JsonProperty(ClusterProtocol.PACKET_FROM)
     private final Peer from;

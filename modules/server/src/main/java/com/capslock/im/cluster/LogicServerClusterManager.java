@@ -1,5 +1,7 @@
 package com.capslock.im.cluster;
 
+import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.ServerPeer;
 import com.google.common.eventbus.EventBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +17,11 @@ public class LogicServerClusterManager extends AbstractServerClusterManager {
     @Autowired
     @Qualifier("logicServerClusterEventBus")
     private EventBus logicServerCusterEventBus;
+
+    @Override
+    ServerPeer createServerPeer(final String serverIp) {
+        return new LogicServerPeer(serverIp);
+    }
 
     @Override
     public EventBus getEventBus() {

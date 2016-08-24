@@ -3,10 +3,12 @@ package com.capslock.im.event.rpcEvent;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by capslock1874.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class StorePrivateChatMessageRequestEvent extends RpcEvent {
     private final ClientPeer owner;

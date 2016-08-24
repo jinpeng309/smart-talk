@@ -3,10 +3,12 @@ package com.capslock.im.commons.model;
 import com.capslock.im.commons.definition.ClientPeerJsonDefinition;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Created by capslock1874.
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ClientPeer extends Peer {
     @JsonProperty(value = ClientPeerJsonDefinition.CLIENT_IP)

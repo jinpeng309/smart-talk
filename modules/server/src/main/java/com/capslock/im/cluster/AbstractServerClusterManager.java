@@ -2,7 +2,6 @@ package com.capslock.im.cluster;
 
 import com.capslock.im.cluster.event.ServerNodeAddEvent;
 import com.capslock.im.cluster.event.ServerNodeRemovedEvent;
-import com.capslock.im.commons.model.LogicServerPeer;
 import com.capslock.im.commons.model.ServerPeer;
 import com.capslock.im.component.ComponentIfc;
 import com.google.common.eventbus.EventBus;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Component
 public abstract class AbstractServerClusterManager implements ComponentIfc {
-    private static final String logicServerPath = "/talk/logic";
 
     private CopyOnWriteArrayList<ServerPeer> serverPeers = new CopyOnWriteArrayList<>();
 
@@ -65,7 +63,7 @@ public abstract class AbstractServerClusterManager implements ComponentIfc {
             serverDataMap = serverNodeTreeCache.getCurrentChildren(getServerPath());
         }
         return serverDataMap.values().stream().map(childData ->
-                new LogicServerPeer(new String(childData.getData()))).sorted().collect(Collectors.toList());
+                createServerPeer(new String(childData.getData()))).sorted().collect(Collectors.toList());
     }
 
     public void registerServer(final ServerPeer serverPeer) throws Exception {
@@ -98,24 +96,26 @@ public abstract class AbstractServerClusterManager implements ComponentIfc {
     private void processServerNodeRemoved(final TreeCacheEvent event) {
         if (!getServerPath().equals(event.getData().getPath())) {
             final String serverIp = event.getData().getPath().substring(getServerPath().length() + 1);
-            final LogicServerPeer logicServerPeer = new LogicServerPeer(serverIp);
-            serverPeers.remove(logicServerPeer);
+            final ServerPeer serverPeer = createServerPeer(serverIp);
+            serverPeers.remove(serverPeer);
             Collections.sort(serverPeers);
-            getEventBus().post(new ServerNodeRemovedEvent(logicServerPeer));
+            getEventBus().post(new ServerNodeRemovedEvent(serverPeer));
         }
     }
 
     private void processServerNodeAdded(final TreeCacheEvent event) {
         if (!getServerPath().equals(event.getData().getPath())) {
             final String serverIp = event.getData().getPath().substring(getServerPath().length() + 1);
-            final LogicServerPeer logicServerPeer = new LogicServerPeer(serverIp);
-            if (!serverPeers.contains(logicServerPeer)) {
-                serverPeers.add(logicServerPeer);
+            final ServerPeer serverPeer = createServerPeer(serverIp);
+            if (!serverPeers.contains(serverPeer)) {
+                serverPeers.add(serverPeer);
                 Collections.sort(serverPeers);
-                getEventBus().post(new ServerNodeAddEvent(logicServerPeer));
+                getEventBus().post(new ServerNodeAddEvent(serverPeer));
             }
         }
     }
+
+    abstract ServerPeer createServerPeer(final String serverIp);
 
     abstract public EventBus getEventBus();
 

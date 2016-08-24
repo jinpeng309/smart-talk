@@ -1,6 +1,6 @@
 package com.capslock.im.cluster.event;
 
-import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.ServerPeer;
 import lombok.Data;
 
 /**
@@ -8,5 +8,5 @@ import lombok.Data;
  */
 @Data
 public class ServerNodeAddEvent {
-    private final LogicServerPeer logicServerPeer;
+    private final ServerPeer serverPeer;
 }
