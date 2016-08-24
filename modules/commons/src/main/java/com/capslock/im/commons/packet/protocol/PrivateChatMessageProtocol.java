@@ -14,4 +14,5 @@ public final class PrivateChatMessageProtocol {
     public static final String FROM = "from";
     public static final String TO = "to";
     public static final String CONTENT = "content";
+    public static final String UUID = "uuid";
 }

@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class StorePrivateChatMessageSuccessEvent extends RpcEvent {
+    private final String uuid;
     private final ClientPeer owner;
 
     @Override
