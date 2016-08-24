@@ -1,11 +1,12 @@
 package com.capslock.im.component.session;
 
-import com.capslock.im.cluster.ClusterManager;
+import com.capslock.im.cluster.LogicServerClusterManager;
 import com.capslock.im.cluster.LogicServerNodeSelector;
-import com.capslock.im.cluster.event.LogicServerNodeAddEvent;
+import com.capslock.im.cluster.event.ServerNodeAddEvent;
 import com.capslock.im.commons.annotations.Protocol;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.ServerPeer;
 import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.SessionToClientClusterPacket;
 import com.capslock.im.commons.packet.cluster.SessionToSessionClusterPacket;
@@ -66,7 +67,7 @@ public class SessionManager extends MessageReceiver<Event> {
     private LogicServerNodeSelector logicServerNodeSelector;
 
     @Autowired
-    private ClusterManager clusterManager;
+    private LogicServerClusterManager logicServerClusterManager;
 
     @Autowired
     @Qualifier("logicServerClusterEventBus")
@@ -109,7 +110,7 @@ public class SessionManager extends MessageReceiver<Event> {
         connServerClusterEventBus.register(this);
         localHost = NetUtils.getLocalHost().intern();
         localServerPeer = new LogicServerPeer(localHost);
-        clusterManager.registerLogicServer(localServerPeer);
+        logicServerClusterManager.registerServer(localServerPeer);
         initProcessorMap();
         initPacketFilter();
         initPacketPostProcessor();
@@ -229,7 +230,7 @@ public class SessionManager extends MessageReceiver<Event> {
 
     private void processSessionToSessionPacketRequest(final SessionToSessionPacketRequest request) {
         final long receiverUid = request.getReceiverUid();
-        final LogicServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
+        final ServerPeer toLogicServer = logicServerNodeSelector.selectByUid(receiverUid);
         final Session localSession = sessionMap.get(receiverUid);
         if (localSession != null && localServerPeer.equals(toLogicServer)) {
             final SessionToSessionClusterPacket outPacket = new SessionToSessionClusterPacket(localServerPeer, localServerPeer,
@@ -294,7 +295,7 @@ public class SessionManager extends MessageReceiver<Event> {
     }
 
     @Subscribe
-    public void handleLogicServerNodeAdded(final LogicServerNodeAddEvent event) {
+    public void handleLogicServerNodeAdded(final ServerNodeAddEvent event) {
         cleanUselessSession();
     }
 

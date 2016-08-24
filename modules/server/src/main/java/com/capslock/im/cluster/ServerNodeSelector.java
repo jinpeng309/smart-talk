@@ -12,7 +12,7 @@ import java.util.List;
  * Created by capslock1874.
  */
 @Component
-public abstract class ServerNodeSelector<T extends ServerPeer> implements ComponentIfc {
+public abstract class ServerNodeSelector implements ComponentIfc {
 
     @PostConstruct
     @Override
@@ -20,9 +20,9 @@ public abstract class ServerNodeSelector<T extends ServerPeer> implements Compon
 
     }
 
-    public T selectByUid(final long uid) {
+    public ServerPeer selectByUid(final long uid) {
         return getNodeList().get(Hashing.consistentHash(uid, getNodeList().size()));
     }
 
-    public abstract List<T> getNodeList();
+    public abstract List<ServerPeer> getNodeList();
 }

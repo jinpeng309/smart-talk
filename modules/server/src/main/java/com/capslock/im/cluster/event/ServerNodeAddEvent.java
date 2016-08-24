@@ -7,6 +7,6 @@ import lombok.Data;
  * Created by capslock1874.
  */
 @Data
-public class LogicServerNodeRemovedEvent {
+public class ServerNodeAddEvent {
     private final LogicServerPeer logicServerPeer;
 }

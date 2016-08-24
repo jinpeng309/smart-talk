@@ -1,6 +1,6 @@
 package com.capslock.im.component.connection;
 
-import com.capslock.im.cluster.ClusterManager;
+import com.capslock.im.cluster.ConnServerClusterManager;
 import com.capslock.im.cluster.LogicServerNodeSelector;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.ConnServerPeer;
@@ -48,7 +48,7 @@ public class ConnectionManager extends MessageReceiver<ClusterPacket> {
     private ConnectedClientsCache connectedClientsCache;
 
     @Autowired
-    private ClusterManager clusterManager;
+    private ConnServerClusterManager connServerClusterManager;
 
     @Autowired
     @Qualifier("logicServerClusterEventBus")
@@ -74,7 +74,7 @@ public class ConnectionManager extends MessageReceiver<ClusterPacket> {
             throw new Exception(e);
         }
         localServerPeer = new ConnServerPeer(localHost);
-        clusterManager.registerConnServer(localServerPeer);
+        connServerClusterManager.registerServer(localServerPeer);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ConnectionManager extends MessageReceiver<ClusterPacket> {
         final Connection connection = connectionMap.get(deviceUuid);
         if (connection != null) {
             final ClientPeer clientPeer = connection.getClientPeer();
-            final LogicServerPeer logicServerPeer = logicServerNodeSelector.selectByUid(clientPeer.getUid());
+            final LogicServerPeer logicServerPeer = (LogicServerPeer) logicServerNodeSelector.selectByUid(clientPeer.getUid());
             final ClientToSessionClusterPacket packet = new ClientToSessionClusterPacket(clientPeer, logicServerPeer,
                     socketPacket);
             connectionMessageQueueManager.postMessage(packet);
