@@ -27,12 +27,16 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(final String... args) throws Exception {
-        if (StartServerTypeConfig.CONNECTION_SERVER.equals(startType)) {
-            context.getBean(Connector.class).start();
-        } else if (StartServerTypeConfig.LOGIC_SERVER.equals(startType)) {
-            context.getBean(SessionManager.class).start();
-        } else if (StartServerTypeConfig.STORAGE_SERVER.equals(startType)) {
-            context.getBean(StorageManager.class).start();
+        switch (startType) {
+            case StartServerTypeConfig.CONNECTION_SERVER:
+                context.getBean(Connector.class).start();
+                break;
+            case StartServerTypeConfig.LOGIC_SERVER:
+                context.getBean(SessionManager.class).start();
+                break;
+            case StartServerTypeConfig.STORAGE_SERVER:
+                context.getBean(StorageManager.class).start();
+                break;
         }
     }
 }
