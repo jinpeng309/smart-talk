@@ -42,6 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -49,7 +51,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TransferQueue;
@@ -167,12 +168,16 @@ public class SessionManager extends MessageReceiver<Event> {
         if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
             final ClusterPacket clusterPacket = ((ClusterPacketInboundEvent) event).getClusterPacket();
             final ClientPeer client = (ClientPeer) clusterPacket.getFrom();
-            final Session session = getOrCreateSession(client.getUid());
-            postProcessorItem(createClusterPacketInboundProcessItem(session, clusterPacket));
+            getOrCreateSession(client.getUid())
+                    .subscribeOn(Schedulers.immediate())
+                    .subscribe(session ->
+                            postProcessorItem(createClusterPacketInboundProcessItem(session, clusterPacket)));
         } else if (event.getType() == EventType.RPC) {
             final RpcEvent rpcEvent = (RpcEvent) event;
-            final Session session = getOrCreateSession(rpcEvent.getOwnerUid());
-            postProcessorItem(createRpcEventProcessItem(session, event));
+            getOrCreateSession(rpcEvent.getOwnerUid())
+                    .subscribeOn(Schedulers.immediate())
+                    .subscribe(session ->
+                            postProcessorItem(createRpcEventProcessItem(session, event)));
         }
     }
 
@@ -243,8 +248,15 @@ public class SessionManager extends MessageReceiver<Event> {
         }
     }
 
-    public Session getOrCreateSession(final long uid) {
-        return Optional.ofNullable(sessionMap.get(uid)).orElseGet(() -> createSession(uid));
+    public Observable<Session> getOrCreateSession(final long uid) {
+        return Observable.create(subscriber -> {
+            Session session = sessionMap.get(uid);
+            if (session == null) {
+                session = createSession(uid);
+            }
+            subscriber.onNext(session);
+            subscriber.onCompleted();
+        });
     }
 
     public Session createSession(final long uid) {
