@@ -26,11 +26,11 @@ public abstract class MessageQueueManager extends MessageReceiver<ClusterPacket>
     protected String localHost;
 
     protected String getStorageServerQueueName(final StorageServerPeer storageServerPeer) {
-        return getStorageServerQueueNamePrefix() + "_" + storageServerPeer.getServerIp();
+        return getStorageServerQueueNamePrefix() + storageServerPeer.getServerIp();
     }
 
     protected String getLogicServerQueueName(final LogicServerPeer logicServerPeer) {
-        return getLogicServerQueueNamePrefix() + "_" + logicServerPeer.getServerIp();
+        return getLogicServerQueueNamePrefix() + logicServerPeer.getServerIp();
     }
 
     protected String getConnServerQueueName(final ConnServerPeer logicServerPeer) {

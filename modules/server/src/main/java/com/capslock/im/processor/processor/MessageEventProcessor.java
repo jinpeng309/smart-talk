@@ -15,7 +15,6 @@ import com.capslock.im.model.event.ClusterPacketOutboundEvent.SessionToClientPac
 import com.capslock.im.model.event.ClusterPacketOutboundEvent.SessionToSessionPacketRequest;
 import com.capslock.im.model.event.Event;
 import com.capslock.im.model.event.EventType;
-import com.capslock.im.model.event.rpcEvent.StorePrivateChatMessageRequestEvent;
 
 import java.util.ArrayList;
 
@@ -38,7 +37,7 @@ public class MessageEventProcessor implements PacketEventProcessor {
                 final SessionToSessionPacketRequest request = new SessionToSessionPacketRequest(
                         clusterClusterPacket.getPacket(), from, receiverUid);
                 output.add(new ClusterPacketOutboundEvent(request));
-                output.add(new StorePrivateChatMessageRequestEvent(from, messagePacket));
+//                output.add(new StorePrivateChatMessageRequestEvent(from, messagePacket));
             } else if (clusterClusterPacket.getType() == PacketType.S2S) {
                 final AbstractSocketPacket packet = clusterClusterPacket.getPacket();
                 session.getAllClients().forEach(clientPeer -> output.add(new ClusterPacketOutboundEvent(

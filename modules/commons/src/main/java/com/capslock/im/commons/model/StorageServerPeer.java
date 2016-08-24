@@ -4,6 +4,9 @@ package com.capslock.im.commons.model;
  * Created by capslock1874.
  */
 public class StorageServerPeer extends ServerPeer {
+    public StorageServerPeer() {
+    }
+
     public StorageServerPeer(final String serverIp) {
         super(serverIp);
     }

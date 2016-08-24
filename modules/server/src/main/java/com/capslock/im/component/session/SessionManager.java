@@ -141,7 +141,7 @@ public class SessionManager extends MessageReceiver<Event> {
     }
 
     private void initProcessorMap() {
-        final Reflections reflections = new Reflections("com.capslock.im.plugin.processor");
+        final Reflections reflections = new Reflections("com.capslock.im.processor");
         final HashMap<String, List<PacketEventProcessor>> processors = new HashMap<>();
         reflections.getTypesAnnotatedWith(Protocol.class)
                 .forEach(clazz -> {
@@ -166,6 +166,7 @@ public class SessionManager extends MessageReceiver<Event> {
     @Override
     public void processInboundMessage(final Event event) {
         if (event.getType() == EventType.CLUSTER_PACKET_INBOUND) {
+            //todo s2s s2c?
             final ClusterPacket clusterPacket = ((ClusterPacketInboundEvent) event).getClusterPacket();
             final ClientPeer client = (ClientPeer) clusterPacket.getFrom();
             getOrCreateSession(client.getUid())

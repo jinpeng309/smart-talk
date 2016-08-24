@@ -6,13 +6,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Created by alvin.
+ * Created by capslock1874.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class ServerPeer<T extends ServerPeer> extends Peer implements Comparable<T> {
     @JsonProperty(value = ServerPeerJsonDefinition.SERVER_IP)
-    protected final String serverIp;
+    protected String serverIp;
+
+    public ServerPeer() {
+    }
+
+    public ServerPeer(final String ip) {
+        this.serverIp = ip;
+    }
 
     @Override
     public int compareTo(@SuppressWarnings("NullableProblems") final T other) {

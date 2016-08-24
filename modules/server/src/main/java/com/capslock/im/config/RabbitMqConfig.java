@@ -17,6 +17,8 @@ public class RabbitMqConfig {
     public Connection getConnection() throws IOException, TimeoutException {
         final ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("139.162.57.135");
+        factory.setUsername("capslock1874");
+        factory.setPassword("1235813");
         return factory.newConnection();
     }
 }

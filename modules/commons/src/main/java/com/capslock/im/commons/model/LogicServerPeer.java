@@ -4,6 +4,10 @@ package com.capslock.im.commons.model;
  * Created by capslock1874.
  */
 public class LogicServerPeer extends ServerPeer {
+
+    public LogicServerPeer() {
+    }
+
     public LogicServerPeer(final String serverIp) {
         super(serverIp);
     }

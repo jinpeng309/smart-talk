@@ -9,6 +9,9 @@ public class ConnServerPeer extends ServerPeer {
         super(serverIp);
     }
 
+    public ConnServerPeer() {
+    }
+
     @Override
     public PeerType getType() {
         return PeerType.CONN_SERVER;

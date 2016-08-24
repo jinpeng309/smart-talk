@@ -1,5 +1,6 @@
 package com.capslock.im.commons.packet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -7,5 +8,6 @@ import lombok.Data;
  */
 @Data
 public abstract class AbstractSocketPacket {
+    @JsonIgnore
     public abstract String getProtocolName();
 }
