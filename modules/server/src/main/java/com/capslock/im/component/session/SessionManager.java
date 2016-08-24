@@ -276,13 +276,16 @@ public class SessionManager extends MessageReceiver<Event> {
     private void processOutputRpcEvent(final RpcEvent event) {
         switch (event.getInternalEventType()) {
             case STORE_PRIVATE_CHAT_MESSAGE_REQUEST:
-                final StorePrivateChatMessageRequestEvent rpcEvent = (StorePrivateChatMessageRequestEvent) event;
-                final StorePrivateChatMessageRpcRequest request = new StorePrivateChatMessageRpcRequest(rpcEvent.getOwner(),
-                        rpcEvent.getPacket());
-                sessionMessageQueueManager.postMessage(new SessionToStorageClusterPacket(localServerPeer, null,
-                        request.getProtocolName(), request, rpcEvent.getOwner()));
+                processStorePrivateChatMessageRequest((StorePrivateChatMessageRequestEvent) event);
                 break;
         }
+    }
+
+    private void processStorePrivateChatMessageRequest(final StorePrivateChatMessageRequestEvent event) {
+        final StorePrivateChatMessageRpcRequest request = new StorePrivateChatMessageRpcRequest(event.getOwner(),
+                event.getPacket());
+        sessionMessageQueueManager.postMessage(new SessionToStorageClusterPacket(localServerPeer, null,
+                request.getProtocolName(), request, event.getOwner()));
     }
 
     public void stop() {
