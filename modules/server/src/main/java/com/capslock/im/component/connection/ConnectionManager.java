@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
+import rx.schedulers.Schedulers;
 
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -133,8 +134,10 @@ public class ConnectionManager extends MessageReceiver<ClusterPacket> {
     public void clientClose(final String deviceUuid) {
         getConnection(deviceUuid).ifPresent(connection -> {
             final ClientPeer client = connection.getClientPeer();
-            connectedClientsCache.removeClient(client.getUid(), client.getConnServerNodeIp());
             connectionMap.remove(deviceUuid);
+            connectedClientsCache.removeClientAsync(client.getUid(), client.getConnServerNodeIp())
+                    .subscribeOn(Schedulers.immediate())
+                    .subscribe();
         });
     }
 
