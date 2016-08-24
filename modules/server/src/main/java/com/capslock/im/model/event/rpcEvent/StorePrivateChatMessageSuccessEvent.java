@@ -1,7 +1,6 @@
-package com.capslock.im.event.rpcEvent;
+package com.capslock.im.model.event.rpcEvent;
 
 import com.capslock.im.commons.model.ClientPeer;
-import com.capslock.im.commons.packet.inbound.PrivateChatMessagePacket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,9 +9,9 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StorePrivateChatMessageRequestEvent extends RpcEvent {
+public class StorePrivateChatMessageSuccessEvent extends RpcEvent {
+    private final String uuid;
     private final ClientPeer owner;
-    private final PrivateChatMessagePacket packet;
 
     @Override
     public int getDispatchIndex() {
@@ -26,6 +25,6 @@ public class StorePrivateChatMessageRequestEvent extends RpcEvent {
 
     @Override
     public RpcEventType getInternalEventType() {
-        return RpcEventType.STORE_PRIVATE_CHAT_MESSAGE_REQUEST;
+        return RpcEventType.STORE_PRIVATE_CHAT_MESSAGE_SUCCEED;
     }
 }

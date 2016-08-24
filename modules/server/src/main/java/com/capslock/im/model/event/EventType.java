@@ -1,4 +1,4 @@
-package com.capslock.im.event;
+package com.capslock.im.model.event;
 
 /**
  * Created by capslock1874.

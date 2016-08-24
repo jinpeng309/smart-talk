@@ -1,7 +1,5 @@
 package com.capslock.im.component.connection;
 
-import com.capslock.im.cluster.ConnServerClusterManager;
-import com.capslock.im.cluster.LogicServerNodeSelector;
 import com.capslock.im.commons.model.ClientPeer;
 import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.LogicServerPeer;
@@ -12,8 +10,10 @@ import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.commons.packet.inbound.SocketAuthRequestPacket;
 import com.capslock.im.commons.packet.outbound.SocketAuthResponse;
 import com.capslock.im.commons.util.NetUtils;
-import com.capslock.im.component.ConnectedClientsCache;
 import com.capslock.im.component.MessageReceiver;
+import com.capslock.im.component.cache.ConnectedClientsCache;
+import com.capslock.im.component.cluster.ConnServerClusterManager;
+import com.capslock.im.component.cluster.LogicServerNodeSelector;
 import com.capslock.im.config.ConnServerCondition;
 import com.capslock.im.model.Connection;
 import com.google.common.eventbus.EventBus;

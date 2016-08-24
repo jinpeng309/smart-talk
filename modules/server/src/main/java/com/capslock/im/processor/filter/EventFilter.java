@@ -1,7 +1,7 @@
 package com.capslock.im.processor.filter;
 
-import com.capslock.im.event.Event;
 import com.capslock.im.model.Session;
+import com.capslock.im.model.event.Event;
 
 import java.util.ArrayList;
 

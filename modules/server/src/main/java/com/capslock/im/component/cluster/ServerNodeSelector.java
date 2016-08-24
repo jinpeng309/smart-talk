@@ -1,4 +1,4 @@
-package com.capslock.im.cluster;
+package com.capslock.im.component.cluster;
 
 import com.capslock.im.commons.model.ServerPeer;
 import com.capslock.im.component.ComponentIfc;

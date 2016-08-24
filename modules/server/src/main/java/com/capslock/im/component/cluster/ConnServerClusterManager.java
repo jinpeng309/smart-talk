@@ -1,6 +1,6 @@
-package com.capslock.im.cluster;
+package com.capslock.im.component.cluster;
 
-import com.capslock.im.commons.model.LogicServerPeer;
+import com.capslock.im.commons.model.ConnServerPeer;
 import com.capslock.im.commons.model.ServerPeer;
 import com.google.common.eventbus.EventBus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +12,24 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class LogicServerClusterManager extends AbstractServerClusterManager {
-    private static final String logicServerPath = "/talk/logic";
+public class ConnServerClusterManager extends AbstractServerClusterManager {
+    private static final String connServerPath = "/talk/conn";
     @Autowired
-    @Qualifier("logicServerClusterEventBus")
-    private EventBus logicServerCusterEventBus;
+    @Qualifier("connServerClusterEventBus")
+    private EventBus connServerClusterEventBus;
 
     @Override
     ServerPeer createServerPeer(final String serverIp) {
-        return new LogicServerPeer(serverIp);
+        return new ConnServerPeer(serverIp);
     }
 
     @Override
     public EventBus getEventBus() {
-        return logicServerCusterEventBus;
+        return connServerClusterEventBus;
     }
 
     @Override
     public String getServerPath() {
-        return logicServerPath;
+        return connServerPath;
     }
 }

@@ -1,7 +1,7 @@
-package com.capslock.im.event.rpcEvent;
+package com.capslock.im.model.event.rpcEvent;
 
-import com.capslock.im.event.Event;
-import com.capslock.im.event.EventType;
+import com.capslock.im.model.event.Event;
+import com.capslock.im.model.event.EventType;
 
 /**
  * Created by capslock1874.

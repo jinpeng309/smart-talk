@@ -1,4 +1,4 @@
-package com.capslock.im.cluster.event;
+package com.capslock.im.component.cluster.event;
 
 import com.capslock.im.commons.model.ServerPeer;
 import lombok.Data;

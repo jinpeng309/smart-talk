@@ -5,7 +5,7 @@ import com.capslock.im.commons.packet.cluster.ClusterPacket;
 import com.capslock.im.commons.packet.cluster.PacketType;
 import com.capslock.im.component.MessageQueueManager;
 import com.capslock.im.config.StorageServerCondition;
-import com.capslock.im.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
+import com.capslock.im.model.event.ClusterPacketInboundEvent.ClusterPacketInboundEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;

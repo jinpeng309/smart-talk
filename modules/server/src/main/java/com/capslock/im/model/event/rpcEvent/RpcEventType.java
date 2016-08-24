@@ -1,4 +1,4 @@
-package com.capslock.im.event.rpcEvent;
+package com.capslock.im.model.event.rpcEvent;
 
 /**
  * Created by capslock1874.

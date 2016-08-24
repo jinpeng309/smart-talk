@@ -1,9 +1,9 @@
-package com.capslock.im.cluster;
+package com.capslock.im.component.cluster;
 
-import com.capslock.im.cluster.event.ServerNodeAddEvent;
-import com.capslock.im.cluster.event.ServerNodeRemovedEvent;
 import com.capslock.im.commons.model.ServerPeer;
 import com.capslock.im.component.ComponentIfc;
+import com.capslock.im.component.cluster.event.ServerNodeAddEvent;
+import com.capslock.im.component.cluster.event.ServerNodeRemovedEvent;
 import com.google.common.eventbus.EventBus;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
