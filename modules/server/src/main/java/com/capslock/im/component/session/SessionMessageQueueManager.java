@@ -46,7 +46,6 @@ public class SessionMessageQueueManager extends MessageQueueManager {
                     final AMQP.BasicProperties properties, final byte[] body) throws IOException {
                 final String rawData = new String(body, Charsets.UTF_8);
                 final ClusterPacket clusterPacket = ClusterPacketDeserializer.deserialize(rawData);
-                System.out.println("receive message " + clusterPacket );
                 processMessageFromMessageQueue(clusterPacket);
             }
         };

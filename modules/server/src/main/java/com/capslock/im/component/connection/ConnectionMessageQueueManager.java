@@ -74,7 +74,6 @@ public class ConnectionMessageQueueManager extends MessageQueueManager {
 
     private void publishMessageToQueue(final ClusterPacket message, final LogicServerPeer logicServerPeer) {
         try {
-            System.out.println("post message " + message);
             channel.basicPublish("", getLogicServerQueueName(logicServerPeer), null,
                     objectMapper.writeValueAsBytes(message));
         } catch (IOException e) {
